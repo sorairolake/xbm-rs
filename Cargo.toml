@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2024 Shun Sakai
+#
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+
+[package]
+name = "xbm"
+version = "0.1.0"
+authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
+edition = "2021"
+rust-version = "1.67.1"
+description = "XBM encoding and decoding library"
+documentation = "https://docs.rs/xbm"
+readme = "README.md"
+repository = "https://github.com/sorairolake/xbm-rs"
+license = "Apache-2.0 OR MIT"
+keywords = ["encoding", "image", "xbm"]
+categories = ["multimedia::encoding", "multimedia::images"]
+include = ["/LICENSES", "/README.md", "/src"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+image = { version = "0.25.2", default-features = false, optional = true }
+
+[dev-dependencies]
+image = { version = "0.25.2", default-features = false, features = ["png"] }
+
+[features]
+default = ["image"]
+image = ["dep:image"]
