@@ -77,9 +77,8 @@ impl<W: Write> Encoder<W> {
             for chunk in per_line.chunks(8) {
                 let mut pixels = u8::default();
                 for (i, pixel) in chunk.iter().enumerate() {
-                    pixels |= pixel << (7 - i);
+                    pixels |= pixel << i;
                 }
-                pixels = pixels.reverse_bits();
                 pixels_chunk.push(pixels);
                 if pixels_chunk.len() == 12 {
                     let line = pixels_chunk
