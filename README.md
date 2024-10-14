@@ -15,6 +15,8 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 **xbm-rs** ([`xbm`][version-url]) is a [XBM] encoding and decoding library in
 pure [Rust].
 
+This crate supports the [X version 11 bitmap file format].
+
 ## Usage
 
 Add this to your `Cargo.toml`:
@@ -36,7 +38,7 @@ See the [documentation][docs-url] for more details.
 
 ## Minimum supported Rust version
 
-The minimum supported Rust version (MSRV) of this library is v1.67.1.
+The minimum supported Rust version (MSRV) of this library is v1.74.0.
 
 ## Source code
 
@@ -77,6 +79,7 @@ licensing information.
 [license-badge]: https://img.shields.io/crates/l/xbm?style=for-the-badge
 [XBM]: https://en.wikipedia.org/wiki/X_BitMap
 [Rust]: https://www.rust-lang.org/
+[X version 11 bitmap file format]: https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#Manipulating_Bitmaps
 [`image`]: https://crates.io/crates/image
 [CHANGELOG.adoc]: CHANGELOG.adoc
 [CONTRIBUTING.adoc]: CONTRIBUTING.adoc
