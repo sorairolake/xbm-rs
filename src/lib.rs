@@ -26,7 +26,7 @@
 //!
 //! let mut buf = Vec::with_capacity(132);
 //! let encoder = Encoder::new(buf.by_ref());
-//! encoder.encode(&pixels, "image", 8, 7, None, None).unwrap();
+//! encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
 //! assert_eq!(buf, include_bytes!("../tests/data/basic.xbm"));
 //! ```
 //!
@@ -54,7 +54,7 @@
 //!
 //! let mut buf =
 //!     vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
-//! decoder.decode(buf.as_mut_slice()).unwrap();
+//! decoder.decode(&mut buf).unwrap();
 //! assert_eq!(buf, expected);
 //! ```
 //!

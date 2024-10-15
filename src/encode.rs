@@ -37,69 +37,87 @@ impl<W: Write> Encoder<W> {
     /// - `buf` contains values other than `0` and `1`.
     /// - Only one of `x_hot` and `y_hot` is [`Some`].
     pub fn encode(
-        mut self,
-        buf: &[u8],
-        name: &str,
+        self,
+        buf: impl AsRef<[u8]>,
+        name: impl AsRef<str>,
         width: u32,
         height: u32,
         x_hot: Option<u32>,
         y_hot: Option<u32>,
     ) -> Result<(), Error> {
-        let width = usize::try_from(width).expect("width should be in the range of `usize`");
-        let dimensions = usize::try_from(height).map(|h| width * h);
-        assert_eq!(
-            Ok(buf.len()),
-            dimensions,
-            "`buf` and the image dimensions are different"
-        );
-        assert!(
-            !buf.iter().any(|&p| p > 1),
-            "`buf` contains values other than `0` and `1`"
-        );
-        assert_eq!(
-            x_hot.is_some(),
-            y_hot.is_some(),
-            "only one of `x_hot` and `y_hot` is `Some`"
-        );
+        let inner = |mut encoder: Self,
+                     buf: &[u8],
+                     name: &str,
+                     width: u32,
+                     height: u32,
+                     x_hot: Option<u32>,
+                     y_hot: Option<u32>|
+         -> Result<(), Error> {
+            let width = usize::try_from(width).expect("width should be in the range of `usize`");
+            let dimensions = usize::try_from(height).map(|h| width * h);
+            assert_eq!(
+                Ok(buf.len()),
+                dimensions,
+                "`buf` and the image dimensions are different"
+            );
+            assert!(
+                !buf.iter().any(|&p| p > 1),
+                "`buf` contains values other than `0` and `1`"
+            );
+            assert_eq!(
+                x_hot.is_some(),
+                y_hot.is_some(),
+                "only one of `x_hot` and `y_hot` is `Some`"
+            );
 
-        writeln!(self.writer, "#define {name}_width {width}")?;
-        writeln!(self.writer, "#define {name}_height {height}")?;
-        if let Some(pos) = x_hot {
-            writeln!(self.writer, "#define {name}_x_hot {pos}")?;
-        }
-        if let Some(pos) = y_hot {
-            writeln!(self.writer, "#define {name}_y_hot {pos}")?;
-        }
+            writeln!(encoder.writer, "#define {name}_width {width}")?;
+            writeln!(encoder.writer, "#define {name}_height {height}")?;
+            if let Some(pos) = x_hot {
+                writeln!(encoder.writer, "#define {name}_x_hot {pos}")?;
+            }
+            if let Some(pos) = y_hot {
+                writeln!(encoder.writer, "#define {name}_y_hot {pos}")?;
+            }
 
-        writeln!(self.writer, "static unsigned char {name}_bits[] = {{")?;
-        let mut pixels_chunk = Vec::with_capacity(12);
-        for per_line in buf.chunks(width) {
-            for chunk in per_line.chunks(8) {
-                let mut pixels = u8::default();
-                for (i, pixel) in chunk.iter().enumerate() {
-                    pixels |= pixel << i;
-                }
-                pixels_chunk.push(pixels);
-                if pixels_chunk.len() == 12 {
-                    let line = pixels_chunk
-                        .iter()
-                        .map(|p| format!("{p:#04X}"))
-                        .collect::<Vec<_>>()
-                        .join(", ");
-                    writeln!(self.writer, "    {line},")?;
-                    pixels_chunk.clear();
+            writeln!(encoder.writer, "static unsigned char {name}_bits[] = {{")?;
+            let mut pixels_chunk = Vec::with_capacity(12);
+            for per_line in buf.chunks(width) {
+                for chunk in per_line.chunks(8) {
+                    let mut pixels = u8::default();
+                    for (i, pixel) in chunk.iter().enumerate() {
+                        pixels |= pixel << i;
+                    }
+                    pixels_chunk.push(pixels);
+                    if pixels_chunk.len() == 12 {
+                        let line = pixels_chunk
+                            .iter()
+                            .map(|p| format!("{p:#04X}"))
+                            .collect::<Vec<_>>()
+                            .join(", ");
+                        writeln!(encoder.writer, "    {line},")?;
+                        pixels_chunk.clear();
+                    }
                 }
             }
-        }
-        if !pixels_chunk.is_empty() {
-            let line = pixels_chunk
-                .into_iter()
-                .map(|p| format!("{p:#04X}"))
-                .collect::<Vec<_>>()
-                .join(", ");
-            writeln!(self.writer, "    {line},")?;
-        }
-        writeln!(self.writer, "}};")
+            if !pixels_chunk.is_empty() {
+                let line = pixels_chunk
+                    .into_iter()
+                    .map(|p| format!("{p:#04X}"))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                writeln!(encoder.writer, "    {line},")?;
+            }
+            writeln!(encoder.writer, "}};")
+        };
+        inner(
+            self,
+            buf.as_ref(),
+            name.as_ref(),
+            width,
+            height,
+            x_hot,
+            y_hot,
+        )
     }
 }
 
@@ -124,7 +142,7 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
             ExtendedColorType::L8 => {
                 let mut buf = buf.to_vec();
                 buf.iter_mut().for_each(|p| *p = u8::from(*p < 128));
-                self.encode(&buf, "image", width, height, None, None)
+                self.encode(buf, "image", width, height, None, None)
                     .map_err(ImageError::IoError)
             }
             _ => Err(ImageError::Encoding(EncodingError::new(
@@ -400,7 +418,7 @@ mod tests {
         let mut buf = Vec::with_capacity(69460);
         let encoder = Encoder::new(buf.by_ref());
         encoder
-            .encode(&pixels, "qr_code", width, height, None, None)
+            .encode(pixels, "qr_code", width, height, None, None)
             .unwrap();
         assert_eq!(
             str::from_utf8(&buf).unwrap(),

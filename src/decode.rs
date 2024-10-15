@@ -149,76 +149,83 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///
     /// Panics if the length of `buf` and the image dimensions (the width
     /// multiplied by the height) are different.
-    pub fn decode(self, buf: &mut [u8]) -> Result<(), Error> {
-        let buf_len = buf.len();
-        let width = usize::try_from(self.width()).expect("width should be in the range of `usize`");
-        let dimensions = usize::try_from(self.height()).map(|h| width * h);
-        assert_eq!(
-            Ok(buf_len),
-            dimensions,
-            "`buf` and the image dimensions are different"
-        );
+    pub fn decode(self, buf: &mut (impl AsMut<[u8]> + ?Sized)) -> Result<(), Error> {
+        let inner = |decoder: Self, buf: &mut [u8]| -> Result<(), Error> {
+            let buf_len = buf.len();
+            let width =
+                usize::try_from(decoder.width()).expect("width should be in the range of `usize`");
+            let dimensions = usize::try_from(decoder.height()).map(|h| width * h);
+            assert_eq!(
+                Ok(buf_len),
+                dimensions,
+                "`buf` and the image dimensions are different"
+            );
 
-        let mut pixels = [u8::default(); 8];
-        let mut remaining_pixels = width;
-        let mut pos = usize::default();
+            let mut pixels = [u8::default(); 8];
+            let mut remaining_pixels = width;
+            let mut pos = usize::default();
 
-        let mut lines_iter = self.reader.lines().peekable();
-        while let Some(line) = lines_iter.next() {
-            let line = line?;
-            let mut line = line.trim();
+            let mut lines_iter = decoder.reader.lines().peekable();
+            while let Some(line) = lines_iter.next() {
+                let line = line?;
+                let mut line = line.trim();
 
-            if lines_iter.peek().is_none() {
-                if !line.ends_with("};") {
-                    return Err(Error::InvalidTermination);
-                }
-                line = line.trim_end_matches("};");
-                if line.is_empty() {
-                    break;
-                }
-            }
-
-            let mut line_iter = line
-                .split_terminator(',')
-                .map(str::trim)
-                .map(String::from)
-                .peekable();
-            while let Some(pixels_hex) = line_iter.next() {
-                if line_iter.peek().is_none() && pixels_hex.is_empty() {
-                    break;
+                if lines_iter.peek().is_none() {
+                    if !line.ends_with("};") {
+                        return Err(Error::InvalidTermination);
+                    }
+                    line = line.trim_end_matches("};");
+                    if line.is_empty() {
+                        break;
+                    }
                 }
 
-                if !pixels_hex.is_ascii() || pixels_hex.len() != 4 || !pixels_hex.starts_with("0x")
-                {
-                    return Err(Error::InvalidHexByte(pixels_hex));
-                }
-                let pixels_hex = pixels_hex.trim_start_matches("0x");
-                let pixels_byte = u8::from_str_radix(pixels_hex, 16)?;
+                let mut line_iter = line
+                    .split_terminator(',')
+                    .map(str::trim)
+                    .map(String::from)
+                    .peekable();
+                while let Some(pixels_hex) = line_iter.next() {
+                    if line_iter.peek().is_none() && pixels_hex.is_empty() {
+                        break;
+                    }
 
-                for (i, pixel) in pixels.iter_mut().enumerate() {
-                    *pixel = (pixels_byte >> i) & 1;
-                }
+                    if !pixels_hex.is_ascii()
+                        || pixels_hex.len() != 4
+                        || !pixels_hex.starts_with("0x")
+                    {
+                        return Err(Error::InvalidHexByte(pixels_hex));
+                    }
+                    let pixels_hex = pixels_hex.trim_start_matches("0x");
+                    let pixels_byte = u8::from_str_radix(pixels_hex, 16)?;
 
-                if remaining_pixels < 8 {
-                    buf[pos..(pos + remaining_pixels)].copy_from_slice(&pixels[..remaining_pixels]);
-                    pos += remaining_pixels;
-                    remaining_pixels = width;
-                } else {
-                    buf[pos..(pos + 8)].copy_from_slice(&pixels);
-                    pos += 8;
-                    remaining_pixels -= 8;
-                    if remaining_pixels == 0 {
+                    for (i, pixel) in pixels.iter_mut().enumerate() {
+                        *pixel = (pixels_byte >> i) & 1;
+                    }
+
+                    if remaining_pixels < 8 {
+                        buf[pos..(pos + remaining_pixels)]
+                            .copy_from_slice(&pixels[..remaining_pixels]);
+                        pos += remaining_pixels;
                         remaining_pixels = width;
+                    } else {
+                        buf[pos..(pos + 8)].copy_from_slice(&pixels);
+                        pos += 8;
+                        remaining_pixels -= 8;
+                        if remaining_pixels == 0 {
+                            remaining_pixels = width;
+                        }
                     }
                 }
             }
-        }
 
-        if pos == buf_len {
-            Ok(())
-        } else {
-            Err(Error::InvalidImageSize(pos))
-        }
+            if pos == buf_len {
+                Ok(())
+            } else {
+                Err(Error::InvalidImageSize(pos))
+            }
+        };
+        inner(self, buf.as_mut())
     }
 
     #[allow(clippy::missing_panics_doc)]
@@ -384,7 +391,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 56];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
         {
@@ -397,7 +404,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 56];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
     }
@@ -422,7 +429,7 @@ mod tests {
         assert_eq!(decoder.x_hot(), None);
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 56];
-        decoder.decode(buf.as_mut_slice()).unwrap();
+        decoder.decode(&mut buf).unwrap();
         assert_eq!(buf.as_slice(), expected);
     }
 
@@ -474,7 +481,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 224];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
         {
@@ -487,7 +494,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 224];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
     }
@@ -512,7 +519,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 42];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
         {
@@ -525,7 +532,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 42];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
     }
@@ -556,7 +563,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 168];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
         {
@@ -569,7 +576,7 @@ mod tests {
             assert_eq!(decoder.x_hot(), None);
             assert_eq!(decoder.y_hot(), None);
             let mut buf = [u8::default(); 168];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
     }
@@ -594,7 +601,7 @@ mod tests {
         assert_eq!(decoder.x_hot(), Some(4));
         assert_eq!(decoder.y_hot(), Some(3));
         let mut buf = [u8::default(); 56];
-        decoder.decode(buf.as_mut_slice()).unwrap();
+        decoder.decode(&mut buf).unwrap();
         assert_eq!(buf.as_slice(), expected);
     }
 
@@ -618,7 +625,7 @@ mod tests {
         assert_eq!(decoder.x_hot(), None);
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 56];
-        decoder.decode(buf.as_mut_slice()).unwrap();
+        decoder.decode(&mut buf).unwrap();
         assert_eq!(buf.as_slice(), expected);
     }
 
@@ -993,7 +1000,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             if let Error::InvalidHexByte(value) = err {
                 assert_eq!(value, "🦀");
             } else {
@@ -1010,7 +1017,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             if let Error::InvalidHexByte(value) = err {
                 assert_eq!(value, "1c");
             } else {
@@ -1027,7 +1034,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             if let Error::InvalidHexByte(value) = err {
                 assert_eq!(value, "0b00");
             } else {
@@ -1047,7 +1054,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
         {
@@ -1059,7 +1066,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
         {
@@ -1071,7 +1078,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
         {
@@ -1083,7 +1090,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
 
@@ -1106,7 +1113,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            decoder.decode(buf.as_mut_slice()).unwrap();
+            decoder.decode(&mut buf).unwrap();
             assert_eq!(buf.as_slice(), expected);
         }
 
@@ -1119,7 +1126,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
         {
@@ -1131,7 +1138,7 @@ static unsigned char image_bits[] = {
             let image = Cursor::new(image);
             let decoder = Decoder::new(image).unwrap();
             let mut buf = [u8::default(); 56];
-            let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+            let err = decoder.decode(&mut buf).unwrap_err();
             assert!(matches!(err, Error::InvalidTermination));
         }
     }
@@ -1147,7 +1154,7 @@ static unsigned char image_bits[] = {
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
-        let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+        let err = decoder.decode(&mut buf).unwrap_err();
         if let Error::InvalidImageSize(size) = err {
             assert_eq!(size, 48);
         } else {
@@ -1167,7 +1174,7 @@ static unsigned char image_bits[] = {
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
-        let _: Result<(), Error> = decoder.decode(buf.as_mut_slice());
+        let _: Result<(), Error> = decoder.decode(&mut buf);
     }
 
     #[test]
@@ -1181,7 +1188,7 @@ static unsigned char image_bits[] = {
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
-        let err = decoder.decode(buf.as_mut_slice()).unwrap_err();
+        let err = decoder.decode(&mut buf).unwrap_err();
         assert_eq!(
             err.source()
                 .unwrap()
@@ -1200,7 +1207,7 @@ static unsigned char image_bits[] = {
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
         let mut buf = [];
-        let _: Result<(), Error> = decoder.decode(buf.as_mut_slice());
+        let _: Result<(), Error> = decoder.decode(&mut buf);
     }
 
     #[cfg(feature = "image")]
@@ -1227,7 +1234,7 @@ static unsigned char image_bits[] = {
         assert_eq!(decoder.icc_profile().unwrap(), None);
         assert_eq!(decoder.total_bytes(), 56);
         let mut buf = [u8::default(); 56];
-        decoder.read_image(buf.as_mut_slice()).unwrap();
+        decoder.read_image(&mut buf).unwrap();
         assert_eq!(buf.as_slice(), expected);
     }
 
@@ -1247,7 +1254,7 @@ static unsigned char image_bits[] = {
         assert_eq!(decoder.y_hot(), None);
         let mut buf =
             vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
-        decoder.decode(buf.as_mut_slice()).unwrap();
+        decoder.decode(&mut buf).unwrap();
 
         buf.iter_mut()
             .for_each(|p| *p = if p == &0 { u8::MAX } else { u8::MIN });

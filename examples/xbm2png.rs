@@ -41,7 +41,7 @@ fn main() -> anyhow::Result<()> {
     let mut buf =
         vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
     decoder
-        .decode(buf.as_mut_slice())
+        .decode(&mut buf)
         .context("could not decode XBM image")?;
 
     buf.iter_mut()

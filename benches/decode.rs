@@ -36,7 +36,7 @@ fn decode(b: &mut Bencher) {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
-        decoder.decode(buf.as_mut_slice()).unwrap();
+        decoder.decode(&mut buf).unwrap();
         buf.fill_with(u8::default);
     });
 }
@@ -104,7 +104,7 @@ fn read_image(b: &mut Bencher) {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
-        decoder.read_image(buf.as_mut_slice()).unwrap();
+        decoder.read_image(&mut buf).unwrap();
         buf.fill_with(u8::default);
     });
 }
