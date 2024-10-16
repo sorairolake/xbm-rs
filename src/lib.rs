@@ -73,4 +73,7 @@
 pub mod decode;
 pub mod encode;
 
+#[cfg(feature = "image")]
+pub use image;
+
 pub use crate::{decode::Decoder, encode::Encoder};
