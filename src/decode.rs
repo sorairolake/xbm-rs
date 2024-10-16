@@ -21,7 +21,7 @@ pub struct Decoder<R: BufRead + Seek> {
 }
 
 impl<R: BufRead + Seek> Decoder<R> {
-    #[allow(clippy::missing_panics_doc)]
+    #[allow(clippy::cognitive_complexity, clippy::missing_panics_doc)]
     /// Creates a new `Decoder`.
     ///
     /// # Errors
@@ -34,65 +34,98 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///   hotspot.
     pub fn new(mut reader: R) -> Result<Self, Error> {
         let mut buf = String::new();
-
         reader.read_line(&mut buf)?;
-        let tokens: Vec<_> = buf.split_whitespace().collect();
-        let cond = tokens.len() == 3 && tokens[0] == "#define" && tokens[1].ends_with("_width");
-        if !cond {
+        let mut tokens = buf.split_whitespace();
+        if tokens.next() != Some("#define") {
             return Err(Error::InvalidHeader);
         }
-        let width = tokens[2].parse()?;
-        buf.clear();
-
-        reader.read_line(&mut buf)?;
-        let tokens: Vec<_> = buf.split_whitespace().collect();
-        let cond = tokens.len() == 3 && tokens[0] == "#define" && tokens[1].ends_with("_height");
-        if !cond {
+        let Some(name) = tokens
+            .next()
+            .filter(|t| t.ends_with("_width"))
+            .map(|t| t.trim_end_matches("_width"))
+        else {
+            return Err(Error::InvalidHeader);
+        };
+        let Some(width) = tokens.next().map(str::parse).transpose()? else {
+            return Err(Error::InvalidHeader);
+        };
+        if tokens.next().is_some() {
             return Err(Error::InvalidHeader);
         }
-        let height = tokens[2].parse()?;
-        buf.clear();
+
+        let mut buf = String::new();
+        reader.read_line(&mut buf)?;
+        let mut tokens = buf.split_whitespace();
+        if tokens.next() != Some("#define") || tokens.next() != Some(&format!("{name}_height")) {
+            return Err(Error::InvalidHeader);
+        }
+        let Some(height) = tokens.next().map(str::parse).transpose()? else {
+            return Err(Error::InvalidHeader);
+        };
+        if tokens.next().is_some() {
+            return Err(Error::InvalidHeader);
+        }
 
         let pos = reader.stream_position()?;
-        let (mut x_hot, mut y_hot) = (Option::default(), Option::default());
 
+        let mut buf = String::new();
         reader.read_line(&mut buf)?;
-        if buf.starts_with("#define") {
-            let tokens: Vec<_> = buf.split_whitespace().collect();
-            let cond = tokens.len() == 3 && tokens[0] == "#define" && tokens[1].ends_with("_x_hot");
-            if !cond {
+        let mut tokens = buf.split_whitespace();
+        let x_hot = if tokens.next() == Some("#define") {
+            if tokens.next() != Some(&format!("{name}_x_hot")) {
                 return Err(Error::InvalidHeader);
             }
-            x_hot = tokens[2].parse().map(Some)?;
-        } else {
-            reader.seek(SeekFrom::Start(pos))?;
-        }
-        buf.clear();
-
-        reader.read_line(&mut buf)?;
-        if buf.starts_with("#define") {
-            let tokens: Vec<_> = buf.split_whitespace().collect();
-            let cond = tokens.len() == 3 && tokens[0] == "#define" && tokens[1].ends_with("_y_hot");
-            if !cond {
+            let Some(value) = tokens.next().map(str::parse).transpose()? else {
+                return Err(Error::InvalidHeader);
+            };
+            if tokens.next().is_some() {
                 return Err(Error::InvalidHeader);
             }
-            y_hot = tokens[2].parse().map(Some)?;
+            Some(value)
         } else {
             reader.seek(SeekFrom::Start(pos))?;
-        }
+            Option::default()
+        };
+
+        let mut buf = String::new();
+        reader.read_line(&mut buf)?;
+        let mut tokens = buf.split_whitespace();
+        let y_hot = if tokens.next() == Some("#define") {
+            if tokens.next() != Some(&format!("{name}_y_hot")) {
+                return Err(Error::InvalidHeader);
+            }
+            let Some(value) = tokens.next().map(str::parse).transpose()? else {
+                return Err(Error::InvalidHeader);
+            };
+            if tokens.next().is_some() {
+                return Err(Error::InvalidHeader);
+            }
+            Some(value)
+        } else {
+            reader.seek(SeekFrom::Start(pos))?;
+            Option::default()
+        };
+
         if x_hot.is_some() != y_hot.is_some() {
             return Err(Error::InvalidHeader);
         }
-        buf.clear();
 
         let pos = reader.stream_position()?;
+        let mut buf = String::new();
         reader.read_line(&mut buf)?;
-        let cond = (buf.starts_with("static unsigned char") || buf.starts_with("static char"))
-            && buf.matches("_bits[] = {").count() == 1
-            && buf.matches('{').count() == 1;
-        if cond {
-            let index = u64::try_from(buf.find('{').expect("`{` must be found") + 1)
-                .expect("the index should be in the range of `u64`");
+        if buf.starts_with(&format!("static unsigned char {name}_bits[] = {{"))
+            || buf.starts_with(&format!("static char {name}_bits[] = {{"))
+        {
+            let Some(index) = buf
+                .find('{')
+                .and_then(|i| i.checked_add(1))
+                .map(u64::try_from)
+                .transpose()
+                .ok()
+                .flatten()
+            else {
+                return Err(Error::InvalidHeader);
+            };
             reader.seek(SeekFrom::Start(pos + index))?;
         } else {
             return Err(Error::InvalidHeader);
@@ -630,8 +663,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::too_many_lines)]
-    fn decode_with_invalid_header() {
+    fn decode_with_invalid_width_statement() {
         {
             let image = "#include image_width 8
 #define image_height 7
@@ -653,7 +685,32 @@ static unsigned char image_bits[] = {
             let err = Decoder::new(buf).unwrap_err();
             assert!(matches!(err, Error::InvalidHeader));
         }
+        {
+            let image = "#define image_width
+#define image_height 7
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8 16
+#define image_height 7
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+    }
 
+    #[test]
+    fn decode_with_invalid_height_statement() {
         {
             let image = "#define image_width 8
 #include image_height 7
@@ -675,7 +732,32 @@ static unsigned char image_bits[] = {
             let err = Decoder::new(buf).unwrap_err();
             assert!(matches!(err, Error::InvalidHeader));
         }
+        {
+            let image = "#define image_width 8
+#define image_height
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7 14
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+    }
 
+    #[test]
+    fn decode_with_invalid_x_hot_statement() {
         {
             let image = "#define image_width 8
 #define image_height 7
@@ -701,7 +783,36 @@ static unsigned char image_bits[] = {
             let err = Decoder::new(buf).unwrap_err();
             assert!(matches!(err, Error::InvalidHeader));
         }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+#define image_x_hot
+#define image_y_hot 3
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+#define image_x_hot 4 8
+#define image_y_hot 3
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+    }
 
+    #[test]
+    fn decode_with_invalid_y_hot_statement() {
         {
             let image = "#define image_width 8
 #define image_height 7
@@ -727,7 +838,37 @@ static unsigned char image_bits[] = {
             let err = Decoder::new(buf).unwrap_err();
             assert!(matches!(err, Error::InvalidHeader));
         }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+#define image_x_hot 4
+#define image_y_hot
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+#define image_x_hot 4
+#define image_y_hot 3 6
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+    }
 
+    #[test]
+    #[allow(clippy::too_many_lines)]
+    fn decode_with_invalid_array_declaration() {
         {
             let image = "#define image_width 8
 #define image_height 7
@@ -750,11 +891,98 @@ static short image_bits[] = {
             let err = Decoder::new(buf).unwrap_err();
             assert!(matches!(err, Error::InvalidHeader));
         }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static  unsigned  char  image_bits[]  =  {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_bits[]={
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image _bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_ bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_bits [] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_bits() = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_bits[] + {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
+        {
+            let image = "#define image_width 8
+#define image_height 7
+static unsigned char image_bits[] = [
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+];
+";
+            let buf = Cursor::new(image);
+            let err = Decoder::new(buf).unwrap_err();
+            assert!(matches!(err, Error::InvalidHeader));
+        }
     }
 
     #[test]
-    #[allow(clippy::too_many_lines)]
-    fn decode_with_invalid_header_value() {
+    fn decode_with_invalid_width_value() {
         {
             let image = "#define image_width 4294967296
 #define image_height 7
@@ -809,7 +1037,10 @@ static unsigned char image_bits[] = {
                 &IntErrorKind::InvalidDigit
             );
         }
+    }
 
+    #[test]
+    fn decode_with_invalid_height_value() {
         {
             let image = "#define image_width 8
 #define image_height 4294967296
@@ -864,7 +1095,10 @@ static unsigned char image_bits[] = {
                 &IntErrorKind::InvalidDigit
             );
         }
+    }
 
+    #[test]
+    fn decode_with_invalid_x_hot_value() {
         {
             let image = "#define image_width 8
 #define image_height 7
@@ -925,7 +1159,10 @@ static unsigned char image_bits[] = {
                 &IntErrorKind::InvalidDigit
             );
         }
+    }
 
+    #[test]
+    fn decode_with_invalid_y_hot_value() {
         {
             let image = "#define image_width 8
 #define image_height 7
