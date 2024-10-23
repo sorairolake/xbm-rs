@@ -155,3 +155,16 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
 
 /// The error type indicating that an error occurred during encoding.
 pub type Error = io::Error;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn error_type() {
+        assert_eq!(
+            std::any::type_name::<Error>(),
+            std::any::type_name::<io::Error>()
+        );
+    }
+}
