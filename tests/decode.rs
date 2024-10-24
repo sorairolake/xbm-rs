@@ -846,7 +846,7 @@ fn decode_with_invalid_hex_byte() {
         let image = "#define image_width 8
 #define image_height 7
 static unsigned char image_bits[] = {
-    🦀, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+    \u{1F980}, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
 };
 ";
         let image = Cursor::new(image);
@@ -854,7 +854,7 @@ static unsigned char image_bits[] = {
         let mut buf = [u8::default(); 56];
         let err = decoder.decode(&mut buf).unwrap_err();
         if let Error::InvalidHexByte(value) = err {
-            assert_eq!(value, "🦀");
+            assert_eq!(value, "\u{1F980}");
         } else {
             unreachable!();
         }
