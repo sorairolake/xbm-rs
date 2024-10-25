@@ -130,6 +130,29 @@ fn encode_with_hotspot() {
 }
 
 #[test]
+fn encode_from_invalid_pixels() {
+    // "B" (8x7)
+    let pixels = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\
+\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
+\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
+\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
+
+    let mut buf = [];
+    let encoder = Encoder::new(buf.as_mut_slice());
+    let err = encoder
+        .encode(pixels, "image", 8, 7, None, None)
+        .unwrap_err();
+    assert_eq!(err.kind(), ErrorKind::InvalidData);
+    assert_eq!(
+        err.to_string(),
+        "`buf` contains values other than `0` and `1`"
+    );
+}
+
+#[test]
 fn valid_name() {
     // "B" (8x7)
     let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
@@ -191,25 +214,25 @@ fn invalid_name() {
     {
         let encoder = Encoder::new(buf.as_mut_slice());
         let err = encoder.encode(pixels, "", 8, 7, None, None).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
         let encoder = Encoder::new(buf.as_mut_slice());
         let err = encoder.encode(pixels, "0", 8, 7, None, None).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
         let encoder = Encoder::new(buf.as_mut_slice());
         let err = encoder.encode(pixels, "_", 8, 7, None, None).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
         let encoder = Encoder::new(buf.as_mut_slice());
         let err = encoder.encode(pixels, " ", 8, 7, None, None).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
@@ -217,7 +240,7 @@ fn invalid_name() {
         let err = encoder
             .encode(pixels, "ANSI C", 8, 7, None, None)
             .unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
@@ -225,7 +248,7 @@ fn invalid_name() {
         let err = encoder
             .encode(pixels, "XBM\0", 8, 7, None, None)
             .unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
     {
@@ -233,9 +256,49 @@ fn invalid_name() {
         let err = encoder
             .encode(pixels, "\u{1F980}", 8, 7, None, None)
             .unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }
+}
+
+#[test]
+fn encode_with_only_x_hot_some() {
+    // "B" (8x7)
+    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let mut buf = [];
+    let encoder = Encoder::new(buf.as_mut_slice());
+    let err = encoder
+        .encode(pixels, "image", 8, 7, Some(4), None)
+        .unwrap_err();
+    assert_eq!(err.kind(), ErrorKind::InvalidInput);
+    assert_eq!(err.to_string(), "only one of `x_hot` and `y_hot` is `Some`");
+}
+
+#[test]
+fn encode_with_only_y_hot_some() {
+    // "B" (8x7)
+    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let mut buf = [];
+    let encoder = Encoder::new(buf.as_mut_slice());
+    let err = encoder
+        .encode(pixels, "image", 8, 7, None, Some(3))
+        .unwrap_err();
+    assert_eq!(err.kind(), ErrorKind::InvalidInput);
+    assert_eq!(err.to_string(), "only one of `x_hot` and `y_hot` is `Some`");
 }
 
 #[test]
@@ -253,57 +316,6 @@ fn encode_with_invalid_dimensions() {
     let mut buf = [];
     let encoder = Encoder::new(buf.as_mut_slice());
     let _: Result<(), Error> = encoder.encode(pixels, "image", 4, 3, None, None);
-}
-
-#[test]
-#[should_panic(expected = "`buf` contains values other than `0` and `1`")]
-fn encode_from_invalid_pixels() {
-    // "B" (8x7)
-    let pixels = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
-
-    let mut buf = [];
-    let encoder = Encoder::new(buf.as_mut_slice());
-    let _: Result<(), Error> = encoder.encode(pixels, "image", 8, 7, None, None);
-}
-
-#[test]
-#[should_panic(expected = "only one of `x_hot` and `y_hot` is `Some`")]
-fn encode_with_only_x_hot_some() {
-    // "B" (8x7)
-    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
-
-    let mut buf = [];
-    let encoder = Encoder::new(buf.as_mut_slice());
-    let _: Result<(), Error> = encoder.encode(pixels, "image", 8, 7, Some(4), None);
-}
-
-#[test]
-#[should_panic(expected = "only one of `x_hot` and `y_hot` is `Some`")]
-fn encode_with_only_y_hot_some() {
-    // "B" (8x7)
-    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
-
-    let mut buf = [];
-    let encoder = Encoder::new(buf.as_mut_slice());
-    let _: Result<(), Error> = encoder.encode(pixels, "image", 8, 7, None, Some(3));
 }
 
 #[cfg(feature = "image")]

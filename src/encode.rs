@@ -34,12 +34,8 @@ impl<W: Write> Encoder<W> {
     ///
     /// # Panics
     ///
-    /// Panics if any of the following are true:
-    ///
-    /// - The length of `buf` and the image dimensions (the width multiplied by
-    ///   the height) are different.
-    /// - `buf` contains values other than `0` and `1`.
-    /// - Only one of `x_hot` and `y_hot` is [`Some`].
+    /// Panics if the length of `buf` and the image dimensions (the width
+    /// multiplied by the height) are different.
     ///
     /// [Unicode Standard Annex #31]: https://www.unicode.org/reports/tr31/
     pub fn encode(
@@ -66,23 +62,28 @@ impl<W: Write> Encoder<W> {
                 dimensions,
                 "`buf` and the image dimensions are different"
             );
-            assert!(
-                !buf.iter().any(|&p| p > 1),
-                "`buf` contains values other than `0` and `1`"
-            );
-            assert_eq!(
-                x_hot.is_some(),
-                y_hot.is_some(),
-                "only one of `x_hot` and `y_hot` is `Some`"
-            );
+
+            if buf.iter().any(|&p| p > 1) {
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
+                    "`buf` contains values other than `0` and `1`",
+                ));
+            }
 
             let mut chars = name.chars();
             if !chars.next().is_some_and(unicode_ident::is_xid_start)
                 || !chars.all(unicode_ident::is_xid_continue)
             {
                 return Err(Error::new(
-                    ErrorKind::InvalidInput,
+                    ErrorKind::InvalidData,
                     "invalid C identifier prefix",
+                ));
+            }
+
+            if x_hot.is_some() != y_hot.is_some() {
+                return Err(Error::new(
+                    ErrorKind::InvalidInput,
+                    "only one of `x_hot` and `y_hot` is `Some`",
                 ));
             }
 
