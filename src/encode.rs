@@ -4,7 +4,7 @@
 
 //! Encodes XBM images.
 
-use std::io::{self, Write};
+use std::io::{self, ErrorKind, Write};
 
 /// Encoder for XBM images.
 #[derive(Debug)]
@@ -22,6 +22,10 @@ impl<W: Write> Encoder<W> {
     ///
     /// `0` represents a white pixel and `1` represents a black pixel.
     ///
+    /// `name` accepts a string which follow the specification in [Unicode
+    /// Standard Annex #31], but it is recommended that `name` be restricted to
+    /// the ASCII subset of `XID_Start` and `XID_Continue`.
+    ///
     /// `width` should be a multiple of 8.
     ///
     /// # Errors
@@ -36,6 +40,8 @@ impl<W: Write> Encoder<W> {
     ///   the height) are different.
     /// - `buf` contains values other than `0` and `1`.
     /// - Only one of `x_hot` and `y_hot` is [`Some`].
+    ///
+    /// [Unicode Standard Annex #31]: https://www.unicode.org/reports/tr31/
     pub fn encode(
         self,
         buf: impl AsRef<[u8]>,
@@ -69,6 +75,16 @@ impl<W: Write> Encoder<W> {
                 y_hot.is_some(),
                 "only one of `x_hot` and `y_hot` is `Some`"
             );
+
+            let mut chars = name.chars();
+            if !chars.next().is_some_and(unicode_ident::is_xid_start)
+                || !chars.all(unicode_ident::is_xid_continue)
+            {
+                return Err(Error::new(
+                    ErrorKind::InvalidInput,
+                    "invalid C identifier prefix",
+                ));
+            }
 
             writeln!(encoder.writer, "#define {name}_width {width}")?;
             writeln!(encoder.writer, "#define {name}_height {height}")?;

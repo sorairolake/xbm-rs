@@ -21,6 +21,7 @@ project adheres to https://semver.org/[Semantic Versioning].
 * Change `Encoder::encode` and `Decoder::decode` to generic methods
   ({pull-request-url}/5[#5])
 * Re-export `image` crate ({pull-request-url}/7[#7])
+* Check if `name` follow the specification in UAX31 ({pull-request-url}/13[#13])
 
 == {project-url}/releases/tag/v0.1.0[0.1.0] - 2024-10-14
 

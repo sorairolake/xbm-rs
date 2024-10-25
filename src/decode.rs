@@ -393,7 +393,7 @@ impl From<ParseIntError> for Error {
 
 #[cfg(test)]
 mod tests {
-    use std::{error::Error as _, str::FromStr};
+    use std::{error::Error as _, io::ErrorKind, str::FromStr};
 
     use super::*;
 
@@ -413,7 +413,7 @@ mod tests {
             "InvalidImageSize(0)"
         );
         assert_eq!(
-            format!("{:?}", Error::Io(io::Error::from(io::ErrorKind::NotFound))),
+            format!("{:?}", Error::Io(io::Error::from(ErrorKind::NotFound))),
             "Io(Kind(NotFound))"
         );
         assert_eq!(
@@ -438,7 +438,7 @@ mod tests {
             "invalid image size `0`"
         );
         assert_eq!(
-            format!("{}", Error::Io(io::Error::from(io::ErrorKind::NotFound))),
+            format!("{}", Error::Io(io::Error::from(ErrorKind::NotFound))),
             "entity not found"
         );
         assert_eq!(
@@ -453,7 +453,7 @@ mod tests {
         assert!(Error::InvalidHexByte(String::default()).source().is_none());
         assert!(Error::InvalidTermination.source().is_none());
         assert!(Error::InvalidImageSize(usize::default()).source().is_none());
-        assert!(Error::Io(io::Error::from(io::ErrorKind::NotFound))
+        assert!(Error::Io(io::Error::from(ErrorKind::NotFound))
             .source()
             .unwrap()
             .is::<io::Error>());
@@ -465,7 +465,7 @@ mod tests {
 
     #[test]
     fn from_io_error_to_error() {
-        let err = io::Error::from(io::ErrorKind::NotFound);
+        let err = io::Error::from(ErrorKind::NotFound);
         assert!(matches!(Error::from(err), Error::Io(_)));
     }
 

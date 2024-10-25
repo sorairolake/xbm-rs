@@ -9,7 +9,10 @@
 // Lint levels of Clippy.
 #![warn(clippy::cargo, clippy::nursery, clippy::pedantic)]
 
-use std::str;
+use std::{
+    io::{ErrorKind, Write},
+    str,
+};
 
 use xbm::{encode::Error, Encoder};
 
@@ -124,6 +127,115 @@ fn encode_with_hotspot() {
         str::from_utf8(&buf).unwrap(),
         include_str!("data/hotspot.xbm")
     );
+}
+
+#[test]
+fn valid_name() {
+    // "B" (8x7)
+    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let mut buf = Vec::with_capacity(144);
+
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder.encode(pixels, "A", 8, 7, None, None).is_ok());
+        buf.clear();
+    }
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder.encode(pixels, "a", 8, 7, None, None).is_ok());
+        buf.clear();
+    }
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder.encode(pixels, "TEST", 8, 7, None, None).is_ok());
+        buf.clear();
+    }
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder.encode(pixels, "test", 8, 7, None, None).is_ok());
+        buf.clear();
+    }
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder.encode(pixels, "C17", 8, 7, None, None).is_ok());
+        buf.clear();
+    }
+    {
+        let encoder = Encoder::new(buf.by_ref());
+        assert!(encoder
+            .encode(pixels, "\u{30C6}\u{30B9}\u{30C8}", 8, 7, None, None)
+            .is_ok());
+    }
+}
+
+#[test]
+fn invalid_name() {
+    // "B" (8x7)
+    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let mut buf = [];
+
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder.encode(pixels, "", 8, 7, None, None).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder.encode(pixels, "0", 8, 7, None, None).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder.encode(pixels, "_", 8, 7, None, None).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder.encode(pixels, " ", 8, 7, None, None).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder
+            .encode(pixels, "ANSI C", 8, 7, None, None)
+            .unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder
+            .encode(pixels, "XBM\0", 8, 7, None, None)
+            .unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
+    {
+        let encoder = Encoder::new(buf.as_mut_slice());
+        let err = encoder
+            .encode(pixels, "\u{1F980}", 8, 7, None, None)
+            .unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(), "invalid C identifier prefix");
+    }
 }
 
 #[test]

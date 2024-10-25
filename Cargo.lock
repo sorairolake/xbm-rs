@@ -356,4 +356,5 @@ dependencies = [
  "anyhow",
  "clap",
  "image",
+ "unicode-ident",
 ]
