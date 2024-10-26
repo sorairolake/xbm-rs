@@ -98,7 +98,7 @@ fn decode_to_vec() {
     let decoder = Decoder::new(reader).unwrap();
     let buf = decoder.decode_to_vec().unwrap();
     assert_eq!(buf.len(), 56);
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, expected);
 }
 
 #[test]

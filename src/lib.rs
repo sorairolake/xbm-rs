@@ -24,10 +24,10 @@
 //!     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 //! ];
 //!
-//! let mut buf = Vec::with_capacity(132);
-//! let encoder = Encoder::new(buf.by_ref());
+//! let mut buf = [u8::default(); 132];
+//! let encoder = Encoder::new(buf.as_mut_slice());
 //! encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
-//! assert_eq!(buf, include_bytes!("../tests/data/basic.xbm"));
+//! assert_eq!(buf.as_slice(), include_bytes!("../tests/data/basic.xbm"));
 //! ```
 //!
 //! ## Decoding a XBM file
@@ -47,13 +47,10 @@
 //!     .map(BufReader::new)
 //!     .unwrap();
 //! let decoder = Decoder::new(reader).unwrap();
+//! assert_eq!(decoder.width(), 8);
+//! assert_eq!(decoder.height(), 7);
 //!
-//! let (width, height) = (decoder.width(), decoder.height());
-//! assert_eq!(width, 8);
-//! assert_eq!(height, 7);
-//!
-//! let mut buf =
-//!     vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
+//! let mut buf = [u8::default(); 56];
 //! decoder.decode(&mut buf).unwrap();
 //! assert_eq!(buf, expected);
 //! ```

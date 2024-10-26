@@ -36,6 +36,19 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// - An error occurs during I/O operations.
     /// - An error occurs while parsing either the width, the height, or the
     ///   hotspot.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// assert!(Decoder::new(reader).is_ok());
+    /// ```
     pub fn new(mut reader: R) -> Result<Self, Error> {
         let mut buf = String::new();
         reader.read_line(&mut buf)?;
@@ -149,11 +162,39 @@ impl<R: BufRead + Seek> Decoder<R> {
     }
 
     /// Returns the width of the image.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert_eq!(decoder.width(), 8);
+    /// ```
     pub const fn width(&self) -> u32 {
         self.width
     }
 
     /// Returns the height of the image.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert_eq!(decoder.height(), 7);
+    /// ```
     pub const fn height(&self) -> u32 {
         self.height
     }
@@ -161,6 +202,26 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// Returns the _x_ coordinate of the hotspot.
     ///
     /// Returns [`None`] if the value is not defined.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert!(decoder.x_hot().is_none());
+    ///
+    /// let reader = File::open("tests/data/hotspot.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert_eq!(decoder.x_hot(), Some(4));
+    /// ```
     pub const fn x_hot(&self) -> Option<u32> {
         self.x_hot
     }
@@ -168,6 +229,26 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// Returns the _y_ coordinate of the hotspot.
     ///
     /// Returns [`None`] if the value is not defined.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert!(decoder.y_hot().is_none());
+    ///
+    /// let reader = File::open("tests/data/hotspot.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert_eq!(decoder.y_hot(), Some(3));
+    /// ```
     pub const fn y_hot(&self) -> Option<u32> {
         self.y_hot
     }
@@ -191,6 +272,29 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///
     /// Panics if the length of `buf` and the image dimensions (the width
     /// multiplied by the height) are different.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// // "B" (8x7)
+    /// let expected = [
+    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
+    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    /// ];
+    ///
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    ///
+    /// let mut buf = [u8::default(); 56];
+    /// decoder.decode(&mut buf).unwrap();
+    /// assert_eq!(buf, expected);
+    /// ```
     pub fn decode(self, buf: &mut (impl AsMut<[u8]> + ?Sized)) -> Result<(), Error> {
         let inner = |decoder: Self, buf: &mut [u8]| -> Result<(), Error> {
             let buf_len = buf.len();
@@ -285,6 +389,28 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///   mismatch.
     /// - An error occurs during I/O operations.
     /// - An error occurs while parsing the hex byte value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// // "B" (8x7)
+    /// let expected = [
+    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
+    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    /// ];
+    ///
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    ///
+    /// let buf = decoder.decode_to_vec().unwrap();
+    /// assert_eq!(buf, expected);
+    /// ```
     pub fn decode_to_vec(self) -> Result<Vec<u8>, Error> {
         let dimensions = usize::try_from(self.width())
             .expect("width should be in the range of `usize`")

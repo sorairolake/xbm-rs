@@ -14,6 +14,15 @@ pub struct Encoder<W: Write> {
 
 impl<W: Write> Encoder<W> {
     /// Creates a new `Encoder`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xbm::Encoder;
+    /// #
+    /// let buf = [].as_mut_slice();
+    /// let encoder = Encoder::new(buf);
+    /// ```
     pub const fn new(writer: W) -> Self {
         Self { writer }
     }
@@ -36,6 +45,23 @@ impl<W: Write> Encoder<W> {
     ///
     /// Panics if the length of `buf` and the image dimensions (the width
     /// multiplied by the height) are different.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xbm::Encoder;
+    /// #
+    /// // "B" (8x7)
+    /// let pixels = [
+    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
+    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    /// ];
+    ///
+    /// let mut buf = [u8::default(); 132];
+    /// let encoder = Encoder::new(buf.as_mut_slice());
+    /// encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
+    /// assert_eq!(buf.as_slice(), include_bytes!("../tests/data/basic.xbm"));
+    /// ```
     ///
     /// [Unicode Standard Annex #31]: https://www.unicode.org/reports/tr31/
     pub fn encode(
