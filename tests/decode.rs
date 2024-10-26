@@ -278,9 +278,184 @@ fn decode_without_unsigned() {
 }
 
 #[test]
+fn decode_with_valid_identifiers() {
+    {
+        let image = "#define A_width 8
+#define A_height 7
+#define A_x_hot 4
+#define A_y_hot 3
+static unsigned char A_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+    {
+        let image = "#define a_width 8
+#define a_height 7
+#define a_x_hot 4
+#define a_y_hot 3
+static unsigned char a_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+    {
+        let image = "#define TEST_width 8
+#define TEST_height 7
+#define TEST_x_hot 4
+#define TEST_y_hot 3
+static unsigned char TEST_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+    {
+        let image = "#define test_width 8
+#define test_height 7
+#define test_x_hot 4
+#define test_y_hot 3
+static unsigned char test_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+    {
+        let image = "#define C17_width 8
+#define C17_height 7
+#define C17_x_hot 4
+#define C17_y_hot 3
+static unsigned char C17_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+    {
+        let image = "#define \u{30C6}\u{30B9}\u{30C8}_width 8
+#define \u{30C6}\u{30B9}\u{30C8}_height 7
+#define \u{30C6}\u{30B9}\u{30C8}_x_hot 4
+#define \u{30C6}\u{30B9}\u{30C8}_y_hot 3
+static unsigned char \u{30C6}\u{30B9}\u{30C8}_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let result = Decoder::new(buf);
+        assert!(result.is_ok());
+    }
+}
+
+#[test]
+fn decode_with_invalid_identifiers() {
+    {
+        let image = "#define _width 8
+#define _height 7
+#define _x_hot 4
+#define _y_hot 3
+static unsigned char _bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define 0_width 8
+#define 0_height 7
+#define 0_x_hot 4
+#define 0_y_hot 3
+static unsigned char 0_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define __width 8
+#define __height 7
+#define __x_hot 4
+#define __y_hot 3
+static unsigned char __bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define ANSI C_width 8
+#define ANSI C_height 7
+#define ANSI C_x_hot 4
+#define ANSI C_y_hot 3
+static unsigned char ANSI C_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define XBM\0_width 8
+#define XBM\0_height 7
+#define XBM\0_x_hot 4
+#define XBM\0_y_hot 3
+static unsigned char XBM\0_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define \u{1F980}_width 8
+#define \u{1F980}_height 7
+#define \u{1F980}_x_hot 4
+#define \u{1F980}_y_hot 3
+static unsigned char \u{1F980}_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+}
+
+#[test]
 fn decode_with_invalid_width_statement() {
     {
         let image = "#include image_width 8
+#define image_height 7
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define test_width 8
 #define image_height 7
 static unsigned char image_bits[] = {
     0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
@@ -339,6 +514,17 @@ static unsigned char image_bits[] = {
     }
     {
         let image = "#define image_width 8
+#define test_height 7
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define image_width 8
 static unsigned char image_bits[] = {
     0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
 };
@@ -377,6 +563,19 @@ fn decode_with_invalid_x_hot_statement() {
         let image = "#define image_width 8
 #define image_height 7
 #include image_x_hot 4
+#define image_y_hot 3
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define image_width 8
+#define image_height 7
+#define test_x_hot 4
 #define image_y_hot 3
 static unsigned char image_bits[] = {
     0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
@@ -445,6 +644,19 @@ static unsigned char image_bits[] = {
         let image = "#define image_width 8
 #define image_height 7
 #define image_x_hot 4
+#define test_y_hot 3
+static unsigned char image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define image_width 8
+#define image_height 7
+#define image_x_hot 4
 static unsigned char image_bits[] = {
     0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
 };
@@ -499,6 +711,17 @@ static unsigned short image_bits[] = {
         let image = "#define image_width 8
 #define image_height 7
 static short image_bits[] = {
+    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+};
+";
+        let buf = Cursor::new(image);
+        let err = Decoder::new(buf).unwrap_err();
+        assert!(matches!(err, Error::InvalidHeader));
+    }
+    {
+        let image = "#define image_width 8
+#define image_height 7
+static unsigned char test_bits[] = {
     0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
 };
 ";

@@ -21,7 +21,11 @@ pub struct Decoder<R: BufRead + Seek> {
 }
 
 impl<R: BufRead + Seek> Decoder<R> {
-    #[allow(clippy::cognitive_complexity, clippy::missing_panics_doc)]
+    #[allow(
+        clippy::cognitive_complexity,
+        clippy::missing_panics_doc,
+        clippy::too_many_lines
+    )]
     /// Creates a new `Decoder`.
     ///
     /// # Errors
@@ -43,6 +47,11 @@ impl<R: BufRead + Seek> Decoder<R> {
             .next()
             .filter(|t| t.ends_with("_width"))
             .map(|t| t.trim_end_matches("_width"))
+            .filter(|n| {
+                let mut chars = n.chars();
+                chars.next().is_some_and(unicode_ident::is_xid_start)
+                    && chars.all(unicode_ident::is_xid_continue)
+            })
         else {
             return Err(Error::InvalidHeader);
         };
