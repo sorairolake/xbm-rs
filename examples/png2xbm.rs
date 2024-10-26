@@ -45,8 +45,8 @@ fn main() -> anyhow::Result<()> {
     let encoder = Encoder::new(writer);
     encoder
         .encode(
-            &input,
-            &opt.input
+            input,
+            opt.input
                 .file_stem()
                 .map_or("image".into(), OsStr::to_string_lossy),
             width,

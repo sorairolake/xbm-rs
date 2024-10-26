@@ -24,10 +24,10 @@
 //!     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 //! ];
 //!
-//! let mut buf = Vec::with_capacity(132);
-//! let encoder = Encoder::new(buf.by_ref());
-//! encoder.encode(&pixels, "image", 8, 7, None, None).unwrap();
-//! assert_eq!(buf, include_bytes!("../tests/data/basic.xbm"));
+//! let mut buf = [u8::default(); 132];
+//! let encoder = Encoder::new(buf.as_mut_slice());
+//! encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
+//! assert_eq!(buf.as_slice(), include_bytes!("../tests/data/basic.xbm"));
 //! ```
 //!
 //! ## Decoding a XBM file
@@ -47,21 +47,18 @@
 //!     .map(BufReader::new)
 //!     .unwrap();
 //! let decoder = Decoder::new(reader).unwrap();
+//! assert_eq!(decoder.width(), 8);
+//! assert_eq!(decoder.height(), 7);
 //!
-//! let (width, height) = (decoder.width(), decoder.height());
-//! assert_eq!(width, 8);
-//! assert_eq!(height, 7);
-//!
-//! let mut buf =
-//!     vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
-//! decoder.decode(buf.as_mut_slice()).unwrap();
+//! let mut buf = [u8::default(); 56];
+//! decoder.decode(&mut buf).unwrap();
 //! assert_eq!(buf, expected);
 //! ```
 //!
 //! [XBM]: https://en.wikipedia.org/wiki/X_BitMap
 //! [X version 11 bitmap file format]: https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#Manipulating_Bitmaps
 
-#![doc(html_root_url = "https://docs.rs/xbm/0.1.0/")]
+#![doc(html_root_url = "https://docs.rs/xbm/0.1.1/")]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 // Lint levels of rustc.
 #![forbid(unsafe_code)]
@@ -72,5 +69,8 @@
 
 pub mod decode;
 pub mod encode;
+
+#[cfg(feature = "image")]
+pub use image;
 
 pub use crate::{decode::Decoder, encode::Encoder};
