@@ -4,7 +4,7 @@
 
 [package]
 name = "xbm"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2021"
 rust-version = "1.74.0"
@@ -27,7 +27,7 @@ image = { version = "0.25.4", default-features = false, optional = true }
 unicode-ident = "1.0.13"
 
 [dev-dependencies]
-anyhow = "1.0.90"
+anyhow = "1.0.91"
 clap = { version = "4.5.20", features = ["derive"] }
 image = { version = "0.25.4", default-features = false, features = ["png"] }
 
