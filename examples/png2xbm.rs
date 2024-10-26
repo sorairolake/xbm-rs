@@ -37,7 +37,9 @@ fn main() -> anyhow::Result<()> {
         .with_context(|| format!("could not open {}", opt.input.display()))?;
     let (width, height) = (input.width(), input.height());
     let mut input = DynamicImage::ImageLuma8(input.into_luma8()).into_bytes();
-    input.iter_mut().for_each(|p| *p = u8::from(*p < 128));
+    input
+        .iter_mut()
+        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
 
     let writer = File::create(&opt.output)
         .map(BufWriter::new)

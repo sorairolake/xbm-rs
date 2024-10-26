@@ -31,7 +31,9 @@ fn encode(b: &mut Bencher) {
     let mut pixels = image::open("tests/data/qr_code.png")
         .map(DynamicImage::into_bytes)
         .unwrap();
-    pixels.iter_mut().for_each(|p| *p = u8::from(*p < 128));
+    pixels
+        .iter_mut()
+        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
     let pixels = test::black_box(pixels);
 
     let mut buf = Vec::with_capacity(69460);
@@ -53,7 +55,9 @@ fn write_image(b: &mut Bencher) {
     let mut pixels = image::open("tests/data/qr_code.png")
         .map(DynamicImage::into_bytes)
         .unwrap();
-    pixels.iter_mut().for_each(|p| *p = u8::from(*p < 128));
+    pixels
+        .iter_mut()
+        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
     let pixels = test::black_box(pixels);
 
     let mut buf = Vec::with_capacity(69460);
