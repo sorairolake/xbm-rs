@@ -40,7 +40,7 @@ fn decode() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 56];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
     {
         let reader = File::open("tests/data/basic_minified.xbm")
@@ -53,7 +53,7 @@ fn decode() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 56];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
 }
 
@@ -78,7 +78,7 @@ fn decode_lower_hex() {
     assert_eq!(decoder.y_hot(), None);
     let mut buf = [u8::default(); 56];
     decoder.decode(&mut buf).unwrap();
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, *expected);
 }
 
 #[test]
@@ -102,7 +102,7 @@ fn decode_width_name() {
     assert_eq!(decoder.y_hot(), None);
     let mut buf = [u8::default(); 56];
     decoder.decode(&mut buf).unwrap();
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, *expected);
 }
 
 #[test]
@@ -154,7 +154,7 @@ fn decode_16x14() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 224];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
     {
         let reader = File::open("tests/data/16x14_minified.xbm")
@@ -167,7 +167,7 @@ fn decode_16x14() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 224];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
 }
 
@@ -192,7 +192,7 @@ fn decode_width_7() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 42];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
     {
         let reader = File::open("tests/data/width_7_minified.xbm")
@@ -205,7 +205,7 @@ fn decode_width_7() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 42];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
 }
 
@@ -236,7 +236,7 @@ fn decode_width_14() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 168];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
     {
         let reader = File::open("tests/data/width_14_minified.xbm")
@@ -249,7 +249,7 @@ fn decode_width_14() {
         assert_eq!(decoder.y_hot(), None);
         let mut buf = [u8::default(); 168];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
 }
 
@@ -274,7 +274,7 @@ fn decode_with_hotspot() {
     assert_eq!(decoder.y_hot(), Some(3));
     let mut buf = [u8::default(); 56];
     decoder.decode(&mut buf).unwrap();
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, *expected);
 }
 
 #[test]
@@ -298,7 +298,7 @@ fn decode_without_unsigned() {
     assert_eq!(decoder.y_hot(), None);
     let mut buf = [u8::default(); 56];
     decoder.decode(&mut buf).unwrap();
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, *expected);
 }
 
 #[test]
@@ -1213,7 +1213,7 @@ static unsigned char image_bits[] = {
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
         decoder.decode(&mut buf).unwrap();
-        assert_eq!(buf.as_slice(), expected);
+        assert_eq!(buf, *expected);
     }
 
     {
@@ -1334,7 +1334,7 @@ fn image_decoder() {
     assert_eq!(decoder.total_bytes(), 56);
     let mut buf = [u8::default(); 56];
     decoder.read_image(&mut buf).unwrap();
-    assert_eq!(buf.as_slice(), expected);
+    assert_eq!(buf, *expected);
 }
 
 #[cfg(feature = "image")]
