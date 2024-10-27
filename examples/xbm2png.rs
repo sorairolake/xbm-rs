@@ -15,7 +15,7 @@ use std::{fs::File, io::BufReader, path::PathBuf};
 
 use anyhow::Context;
 use clap::Parser;
-use image::{ColorType, ImageFormat};
+use image::{DynamicImage, ImageFormat};
 use xbm::Decoder;
 
 #[derive(Debug, Parser)]
@@ -37,22 +37,9 @@ fn main() -> anyhow::Result<()> {
         .map(BufReader::new)
         .with_context(|| format!("could not open {}", opt.input.display()))?;
     let decoder = Decoder::new(reader).context("could not create new XBM decoder")?;
-    let (width, height) = (decoder.width(), decoder.height());
-    let mut buf =
-        vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
-    decoder
-        .decode(&mut buf)
-        .context("could not decode XBM image")?;
+    let image = DynamicImage::from_decoder(decoder).context("could not decode XBM image")?;
 
-    buf.iter_mut()
-        .for_each(|p| *p = if p == &0 { u8::MAX } else { u8::MIN });
-    image::save_buffer_with_format(
-        &opt.output,
-        &buf,
-        width,
-        height,
-        ColorType::L8,
-        ImageFormat::Png,
-    )
-    .with_context(|| format!("could not save PNG image to {}", opt.output.display()))
+    image
+        .save_with_format(&opt.output, ImageFormat::Png)
+        .with_context(|| format!("could not save PNG image to {}", opt.output.display()))
 }

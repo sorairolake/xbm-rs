@@ -1316,33 +1316,20 @@ fn image_decoder() {
 #[cfg(feature = "image")]
 #[test]
 fn xbm_to_png() {
-    use image::{ColorType, ImageFormat};
+    use image::{DynamicImage, ImageFormat};
 
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
-    let (width, height) = (decoder.width(), decoder.height());
-    assert_eq!(width, 296);
-    assert_eq!(height, 296);
+    assert_eq!(decoder.width(), 296);
+    assert_eq!(decoder.height(), 296);
     assert_eq!(decoder.x_hot(), None);
     assert_eq!(decoder.y_hot(), None);
-    let mut buf =
-        vec![u8::default(); usize::try_from(width).unwrap() * usize::try_from(height).unwrap()];
-    decoder.decode(&mut buf).unwrap();
+    let image = DynamicImage::from_decoder(decoder).unwrap();
 
-    buf.iter_mut()
-        .for_each(|p| *p = if p == &0 { u8::MAX } else { u8::MIN });
     let mut writer = Cursor::new(Vec::with_capacity(2091));
-    image::write_buffer_with_format(
-        &mut writer,
-        &buf,
-        width,
-        height,
-        ColorType::L8,
-        ImageFormat::Png,
-    )
-    .unwrap();
+    image.write_to(&mut writer, ImageFormat::Png).unwrap();
 
     let actual = image::load_from_memory(writer.get_ref()).unwrap();
     let expected = image::open("tests/data/qr_code.png").unwrap();

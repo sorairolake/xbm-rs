@@ -36,12 +36,12 @@ fn encode(b: &mut Bencher) {
         .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
     let pixels = test::black_box(pixels);
 
-    let mut buf = Vec::with_capacity(69460);
+    let mut buf = Vec::with_capacity(69454);
 
     b.iter(|| {
         let encoder = Encoder::new(buf.by_ref());
         encoder
-            .encode(&pixels, "qr_code", 296, 296, None, None)
+            .encode(&pixels, "image", 296, 296, None, None)
             .unwrap();
         buf.clear();
     });
@@ -52,20 +52,17 @@ fn encode(b: &mut Bencher) {
 fn write_image(b: &mut Bencher) {
     use image::{ExtendedColorType, ImageEncoder};
 
-    let mut pixels = image::open("tests/data/qr_code.png")
+    let pixels = image::open("tests/data/qr_code.png")
         .map(DynamicImage::into_bytes)
         .unwrap();
-    pixels
-        .iter_mut()
-        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
     let pixels = test::black_box(pixels);
 
-    let mut buf = Vec::with_capacity(69460);
+    let mut buf = Vec::with_capacity(69454);
 
     b.iter(|| {
         let encoder = Encoder::new(buf.by_ref());
         encoder
-            .write_image(&pixels, 296, 296, ExtendedColorType::L1)
+            .write_image(&pixels, 296, 296, ExtendedColorType::L8)
             .unwrap();
         buf.clear();
     });

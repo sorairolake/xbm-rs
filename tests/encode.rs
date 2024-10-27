@@ -385,20 +385,11 @@ fn image_encoder_from_unsupported_color_type() {
 #[cfg(feature = "image")]
 #[test]
 fn png_to_xbm() {
-    use std::io::Write;
-
     let input = image::open("tests/data/qr_code.png").unwrap();
-    let (width, height) = (input.width(), input.height());
-    let mut pixels = input.into_bytes();
-    pixels
-        .iter_mut()
-        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
 
-    let mut buf = Vec::with_capacity(69460);
+    let mut buf = Vec::with_capacity(69454);
     let encoder = Encoder::new(buf.by_ref());
-    encoder
-        .encode(pixels, "qr_code", width, height, None, None)
-        .unwrap();
+    input.write_with_encoder(encoder).unwrap();
     assert_eq!(
         str::from_utf8(&buf).unwrap(),
         include_str!("data/qr_code.xbm")

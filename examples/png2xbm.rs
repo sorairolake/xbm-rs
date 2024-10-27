@@ -11,7 +11,7 @@
 // Lint levels of Clippy.
 #![warn(clippy::cargo, clippy::nursery, clippy::pedantic)]
 
-use std::{ffi::OsStr, fs::File, io::BufWriter, path::PathBuf};
+use std::{fs::File, io::BufWriter, path::PathBuf};
 
 use anyhow::Context;
 use clap::Parser;
@@ -34,27 +34,15 @@ fn main() -> anyhow::Result<()> {
     let opt = Opt::parse();
 
     let input = image::open(&opt.input)
+        .map(DynamicImage::into_luma8)
+        .map(DynamicImage::from)
         .with_context(|| format!("could not open {}", opt.input.display()))?;
-    let (width, height) = (input.width(), input.height());
-    let mut input = DynamicImage::ImageLuma8(input.into_luma8()).into_bytes();
-    input
-        .iter_mut()
-        .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
 
     let writer = File::create(&opt.output)
         .map(BufWriter::new)
         .with_context(|| format!("could not open {}", opt.output.display()))?;
     let encoder = Encoder::new(writer);
-    encoder
-        .encode(
-            input,
-            opt.input
-                .file_stem()
-                .map_or("image".into(), OsStr::to_string_lossy),
-            width,
-            height,
-            None,
-            None,
-        )
+    input
+        .write_with_encoder(encoder)
         .context("could not encode to XBM image")
 }
