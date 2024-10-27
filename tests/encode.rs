@@ -37,6 +37,23 @@ fn encode() {
 }
 
 #[test]
+fn encode_width_name() {
+    // "B" (8x7)
+    let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let mut buf = [u8::default(); 129];
+    let encoder = Encoder::new(buf.as_mut_slice());
+    encoder.encode(pixels, "test", 8, 7, None, None).unwrap();
+    assert_eq!(str::from_utf8(&buf).unwrap(), include_str!("data/name.xbm"));
+}
+
+#[test]
 fn encode_16x14() {
     // "B" (16x14)
     let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\

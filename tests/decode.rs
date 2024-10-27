@@ -82,6 +82,30 @@ fn decode_lower_hex() {
 }
 
 #[test]
+fn decode_width_name() {
+    // "B" (8x7)
+    let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x01\x00\x00\x01\x00\x00\
+\x00\x00\x01\x01\x01\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00";
+
+    let reader = File::open("tests/data/name.xbm")
+        .map(BufReader::new)
+        .unwrap();
+    let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.width(), 8);
+    assert_eq!(decoder.height(), 7);
+    assert_eq!(decoder.x_hot(), None);
+    assert_eq!(decoder.y_hot(), None);
+    let mut buf = [u8::default(); 56];
+    decoder.decode(&mut buf).unwrap();
+    assert_eq!(buf.as_slice(), expected);
+}
+
+#[test]
 fn decode_to_vec() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
