@@ -30,6 +30,24 @@
 //! assert_eq!(buf.as_slice(), include_bytes!("../tests/data/basic.xbm"));
 //! ```
 //!
+//! ### `image` crate support
+//!
+//! ```
+//! # #[cfg(feature = "image")]
+//! # {
+//! use std::io::Write;
+//!
+//! use xbm::Encoder;
+//!
+//! let input = image::open("tests/data/qr_code.png").unwrap();
+//!
+//! let mut buf = Vec::with_capacity(69454);
+//! let encoder = Encoder::new(buf.by_ref());
+//! input.write_with_encoder(encoder).unwrap();
+//! assert_eq!(buf, include_bytes!("../tests/data/qr_code.xbm"));
+//! # }
+//! ```
+//!
 //! ## Decoding a XBM file
 //!
 //! ```
@@ -53,6 +71,37 @@
 //! let mut buf = [u8::default(); 56];
 //! decoder.decode(&mut buf).unwrap();
 //! assert_eq!(buf, expected);
+//! ```
+//!
+//! ### `image` crate support
+//!
+//! ```
+//! # #[cfg(feature = "image")]
+//! # {
+//! use std::{
+//!     fs::File,
+//!     io::{BufReader, Cursor},
+//! };
+//!
+//! use xbm::{
+//!     image::{DynamicImage, ImageDecoder, ImageFormat},
+//!     Decoder,
+//! };
+//!
+//! let reader = File::open("tests/data/qr_code.xbm")
+//!     .map(BufReader::new)
+//!     .unwrap();
+//! let decoder = Decoder::new(reader).unwrap();
+//! assert_eq!(decoder.dimensions(), (296, 296));
+//! let image = DynamicImage::from_decoder(decoder).unwrap();
+//!
+//! let mut writer = Cursor::new(Vec::with_capacity(2091));
+//! image.write_to(&mut writer, ImageFormat::Png).unwrap();
+//!
+//! let actual = image::load_from_memory(writer.get_ref()).unwrap();
+//! let expected = image::open("tests/data/qr_code.png").unwrap();
+//! assert_eq!(actual, expected);
+//! # }
 //! ```
 //!
 //! [XBM]: https://en.wikipedia.org/wiki/X_BitMap
