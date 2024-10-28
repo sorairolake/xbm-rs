@@ -115,6 +115,8 @@
 
 #![doc(html_root_url = "https://docs.rs/xbm/0.1.1/")]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
+// Lint levels of rustc.
+#![deny(missing_docs)]
 
 pub mod decode;
 pub mod encode;
