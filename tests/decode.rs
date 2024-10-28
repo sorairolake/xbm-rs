@@ -9,18 +9,19 @@ use std::{
     num::{IntErrorKind, ParseIntError},
 };
 
+use indoc::indoc;
 use xbm::{decode::Error, Decoder};
 
 #[test]
 fn decode() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     {
         let reader = File::open("tests/data/basic.xbm")
@@ -54,12 +55,12 @@ fn decode() {
 fn decode_lower_hex() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     let reader = File::open("tests/data/basic_lower_hex.xbm")
         .map(BufReader::new)
@@ -78,12 +79,12 @@ fn decode_lower_hex() {
 fn decode_width_name() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     let reader = File::open("tests/data/name.xbm")
         .map(BufReader::new)
@@ -102,12 +103,12 @@ fn decode_width_name() {
 fn decode_to_vec() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     let reader = File::open("tests/data/basic.xbm")
         .map(BufReader::new)
@@ -122,19 +123,19 @@ fn decode_to_vec() {
 fn decode_16x14() {
     // "B" (16x14)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
     {
         let reader = File::open("tests/data/16x14.xbm")
@@ -168,11 +169,11 @@ fn decode_16x14() {
 fn decode_width_7() {
     // "I" (7x6)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\
-\x00\x00\x00\x01\x00\x00\x00\
-\x00\x00\x00\x01\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\
+                     \x00\x00\x00\x01\x00\x00\x00\
+                     \x00\x00\x00\x01\x00\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00";
 
     {
         let reader = File::open("tests/data/width_7.xbm")
@@ -206,17 +207,17 @@ fn decode_width_7() {
 fn decode_width_14() {
     // "I" (14x12)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
     {
         let reader = File::open("tests/data/width_14.xbm")
@@ -250,12 +251,12 @@ fn decode_width_14() {
 fn decode_with_hotspot() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     let reader = File::open("tests/data/hotspot.xbm")
         .map(BufReader::new)
@@ -274,12 +275,12 @@ fn decode_with_hotspot() {
 fn decode_without_unsigned() {
     // "B" (8x7)
     let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x01\x00\x00\x01\x00\x00\
+                     \x00\x00\x01\x01\x01\x00\x00\x00\
+                     \x00\x00\x00\x00\x00\x00\x00\x00";
 
     let reader = File::open("tests/data/without_unsigned.xbm")
         .map(BufReader::new)
@@ -297,79 +298,85 @@ fn decode_without_unsigned() {
 #[test]
 fn decode_with_valid_identifiers() {
     {
-        let image = "#define A_width 8
-#define A_height 7
-#define A_x_hot 4
-#define A_y_hot 3
-static unsigned char A_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define A_width 8
+            #define A_height 7
+            #define A_x_hot 4
+            #define A_y_hot 3
+            static unsigned char A_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
     }
     {
-        let image = "#define a_width 8
-#define a_height 7
-#define a_x_hot 4
-#define a_y_hot 3
-static unsigned char a_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define a_width 8
+            #define a_height 7
+            #define a_x_hot 4
+            #define a_y_hot 3
+            static unsigned char a_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
     }
     {
-        let image = "#define TEST_width 8
-#define TEST_height 7
-#define TEST_x_hot 4
-#define TEST_y_hot 3
-static unsigned char TEST_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define TEST_width 8
+            #define TEST_height 7
+            #define TEST_x_hot 4
+            #define TEST_y_hot 3
+            static unsigned char TEST_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
     }
     {
-        let image = "#define test_width 8
-#define test_height 7
-#define test_x_hot 4
-#define test_y_hot 3
-static unsigned char test_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define test_width 8
+            #define test_height 7
+            #define test_x_hot 4
+            #define test_y_hot 3
+            static unsigned char test_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
     }
     {
-        let image = "#define C17_width 8
-#define C17_height 7
-#define C17_x_hot 4
-#define C17_y_hot 3
-static unsigned char C17_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define C17_width 8
+            #define C17_height 7
+            #define C17_x_hot 4
+            #define C17_y_hot 3
+            static unsigned char C17_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
     }
     {
-        let image = "#define \u{30C6}\u{30B9}\u{30C8}_width 8
-#define \u{30C6}\u{30B9}\u{30C8}_height 7
-#define \u{30C6}\u{30B9}\u{30C8}_x_hot 4
-#define \u{30C6}\u{30B9}\u{30C8}_y_hot 3
-static unsigned char \u{30C6}\u{30B9}\u{30C8}_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define \u{30C6}\u{30B9}\u{30C8}_width 8
+            #define \u{30C6}\u{30B9}\u{30C8}_height 7
+            #define \u{30C6}\u{30B9}\u{30C8}_x_hot 4
+            #define \u{30C6}\u{30B9}\u{30C8}_y_hot 3
+            static unsigned char \u{30C6}\u{30B9}\u{30C8}_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let result = Decoder::new(buf);
         assert!(result.is_ok());
@@ -379,79 +386,85 @@ static unsigned char \u{30C6}\u{30B9}\u{30C8}_bits[] = {
 #[test]
 fn decode_with_invalid_identifiers() {
     {
-        let image = "#define _width 8
-#define _height 7
-#define _x_hot 4
-#define _y_hot 3
-static unsigned char _bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define _width 8
+            #define _height 7
+            #define _x_hot 4
+            #define _y_hot 3
+            static unsigned char _bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define 0_width 8
-#define 0_height 7
-#define 0_x_hot 4
-#define 0_y_hot 3
-static unsigned char 0_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define 0_width 8
+            #define 0_height 7
+            #define 0_x_hot 4
+            #define 0_y_hot 3
+            static unsigned char 0_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define __width 8
-#define __height 7
-#define __x_hot 4
-#define __y_hot 3
-static unsigned char __bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define __width 8
+            #define __height 7
+            #define __x_hot 4
+            #define __y_hot 3
+            static unsigned char __bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define ANSI C_width 8
-#define ANSI C_height 7
-#define ANSI C_x_hot 4
-#define ANSI C_y_hot 3
-static unsigned char ANSI C_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define ANSI C_width 8
+            #define ANSI C_height 7
+            #define ANSI C_x_hot 4
+            #define ANSI C_y_hot 3
+            static unsigned char ANSI C_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define XBM\0_width 8
-#define XBM\0_height 7
-#define XBM\0_x_hot 4
-#define XBM\0_y_hot 3
-static unsigned char XBM\0_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define XBM\0_width 8
+            #define XBM\0_height 7
+            #define XBM\0_x_hot 4
+            #define XBM\0_y_hot 3
+            static unsigned char XBM\0_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define \u{1F980}_width 8
-#define \u{1F980}_height 7
-#define \u{1F980}_x_hot 4
-#define \u{1F980}_y_hot 3
-static unsigned char \u{1F980}_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define \u{1F980}_width 8
+            #define \u{1F980}_height 7
+            #define \u{1F980}_x_hot 4
+            #define \u{1F980}_y_hot 3
+            static unsigned char \u{1F980}_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -461,55 +474,60 @@ static unsigned char \u{1F980}_bits[] = {
 #[test]
 fn decode_with_invalid_width_statement() {
     {
-        let image = "#include image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #include image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define test_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define test_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8 16
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8 16
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -519,55 +537,60 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_height_statement() {
     {
-        let image = "#define image_width 8
-#include image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #include image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define test_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define test_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7 14
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7 14
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -577,65 +600,70 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_x_hot_statement() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-#include image_x_hot 4
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #include image_x_hot 4
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define test_x_hot 4
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define test_x_hot 4
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4 8
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4 8
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -645,65 +673,70 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_y_hot_statement() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#include image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #include image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define test_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define test_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define image_y_hot
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define image_y_hot
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define image_y_hot 3 6
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define image_y_hot 3 6
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -714,122 +747,133 @@ static unsigned char image_bits[] = {
 #[allow(clippy::too_many_lines)]
 fn decode_with_invalid_array_declaration() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned short image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned short image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static short image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static short image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char test_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char test_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static  unsigned  char  image_bits[]  =  {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static  unsigned  char  image_bits[]  =  {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[]={
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[]={
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image _bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image _bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_ bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_ bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits [] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits [] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits() = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits() = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] + {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] + {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = [
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-];
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = [
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            ];
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert!(matches!(err, Error::InvalidHeader));
@@ -839,12 +883,13 @@ static unsigned char image_bits[] = [
 #[test]
 fn decode_with_invalid_width_value() {
     {
-        let image = "#define image_width 4294967296
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 4294967296
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -857,12 +902,13 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width -1
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width -1
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -875,12 +921,13 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width a
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width a
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -897,12 +944,13 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_height_value() {
     {
-        let image = "#define image_width 8
-#define image_height 4294967296
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 4294967296
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -915,12 +963,13 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height -1
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height -1
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -933,12 +982,13 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height a
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height a
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -955,14 +1005,15 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_x_hot_value() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4294967296
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4294967296
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -975,14 +1026,15 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot -1
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot -1
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -995,14 +1047,15 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot a
-#define image_y_hot 3
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot a
+            #define image_y_hot 3
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -1019,14 +1072,15 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_y_hot_value() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define image_y_hot 4294967296
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define image_y_hot 4294967296
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -1039,14 +1093,15 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define image_y_hot -1
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define image_y_hot -1
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -1059,14 +1114,15 @@ static unsigned char image_bits[] = {
         );
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-#define image_x_hot 4
-#define image_y_hot a
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            #define image_x_hot 4
+            #define image_y_hot a
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let buf = Cursor::new(image);
         let err = Decoder::new(buf).unwrap_err();
         assert_eq!(
@@ -1083,12 +1139,13 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_hex_byte() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    \u{1F980}, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                \u{1F980}, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            };
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1100,12 +1157,13 @@ static unsigned char image_bits[] = {
         }
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 1c, 0x24, 0x1C, 0x00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 1c, 0x24, 0x1C, 0x00,
+            };
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1117,12 +1175,13 @@ static unsigned char image_bits[] = {
         }
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0b00,
-};
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0b00,
+            };
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1138,11 +1197,12 @@ static unsigned char image_bits[] = {
 #[test]
 fn decode_with_invalid_termination() {
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C }; 0x24, 0x1C, 0x24, 0x1C, 0x00,
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C }; 0x24, 0x1C, 0x24, 0x1C, 0x00,
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1150,11 +1210,12 @@ static unsigned char image_bits[] = {
         assert!(matches!(err, Error::InvalidTermination));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C};0x24, 0x1C, 0x24, 0x1C, 0x00,
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C};0x24, 0x1C, 0x24, 0x1C, 0x00,
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1162,11 +1223,12 @@ static unsigned char image_bits[] = {
         assert!(matches!(err, Error::InvalidTermination));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, }; 0x24, 0x1C, 0x24, 0x1C, 0x00,
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, }; 0x24, 0x1C, 0x24, 0x1C, 0x00,
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1174,11 +1236,12 @@ static unsigned char image_bits[] = {
         assert!(matches!(err, Error::InvalidTermination));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C,};0x24, 0x1C, 0x24, 0x1C, 0x00,
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C,};0x24, 0x1C, 0x24, 0x1C, 0x00,
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1189,19 +1252,20 @@ static unsigned char image_bits[] = {
     {
         // "B" (8x7)
         let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x01\x00\x00\x01\x00\x00\
-\x00\x00\x01\x01\x01\x00\x00\x00\
-\x00\x00\x00\x00\x00\x00\x00\x00";
+                         \x00\x00\x01\x01\x01\x00\x00\x00\
+                         \x00\x00\x01\x00\x00\x01\x00\x00\
+                         \x00\x00\x01\x01\x01\x00\x00\x00\
+                         \x00\x00\x01\x00\x00\x01\x00\x00\
+                         \x00\x00\x01\x01\x01\x00\x00\x00\
+                         \x00\x00\x00\x00\x00\x00\x00\x00";
 
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-}; 
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+            }; 
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1210,11 +1274,12 @@ static unsigned char image_bits[] = {
     }
 
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1222,11 +1287,12 @@ static unsigned char image_bits[] = {
         assert!(matches!(err, Error::InvalidTermination));
     }
     {
-        let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00
-";
+        let image = indoc! {"
+            #define image_width 8
+            #define image_height 7
+            static unsigned char image_bits[] = {
+                0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00
+        "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
         let mut buf = [u8::default(); 56];
@@ -1237,12 +1303,13 @@ static unsigned char image_bits[] = {
 
 #[test]
 fn decode_with_invalid_image_size() {
-    let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C,
-};
-";
+    let image = indoc! {"
+        #define image_width 8
+        #define image_height 7
+        static unsigned char image_bits[] = {
+            0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C,
+        };
+    "};
     let image = Cursor::new(image);
     let decoder = Decoder::new(image).unwrap();
     let mut buf = [u8::default(); 56];
@@ -1257,12 +1324,13 @@ static unsigned char image_bits[] = {
 #[test]
 #[should_panic(expected = "range end index 64 out of range for slice of length 56")]
 fn decode_from_too_large_image() {
-    let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00, 0x00,
-};
-";
+    let image = indoc! {"
+        #define image_width 8
+        #define image_height 7
+        static unsigned char image_bits[] = {
+            0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00, 0x00,
+        };
+    "};
     let image = Cursor::new(image);
     let decoder = Decoder::new(image).unwrap();
     let mut buf = [u8::default(); 56];
@@ -1271,12 +1339,13 @@ static unsigned char image_bits[] = {
 
 #[test]
 fn decode_from_invalid_hex_byte_value() {
-    let image = "#define image_width 8
-#define image_height 7
-static unsigned char image_bits[] = {
-    0x00, 0x1C, 0x24, 0xgg, 0x24, 0x1C, 0x00,
-};
-";
+    let image = indoc! {"
+        #define image_width 8
+        #define image_height 7
+        static unsigned char image_bits[] = {
+            0x00, 0x1C, 0x24, 0xgg, 0x24, 0x1C, 0x00,
+        };
+    "};
     let image = Cursor::new(image);
     let decoder = Decoder::new(image).unwrap();
     let mut buf = [u8::default(); 56];
@@ -1309,12 +1378,12 @@ fn image_decoder() {
 
     // "B" (8x7)
     let expected = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
-\xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
-\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
+                     \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+                     \xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
+                     \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+                     \xFF\xFF\x00\xFF\xFF\x00\xFF\xFF\
+                     \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
+                     \xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
 
     let reader = File::open("tests/data/basic.xbm")
         .map(BufReader::new)
