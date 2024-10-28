@@ -4,13 +4,6 @@
 
 //! An example of converting a XBM file to a PNG file.
 
-// Lint levels of rustc.
-#![forbid(unsafe_code)]
-#![deny(missing_debug_implementations)]
-#![warn(rust_2018_idioms)]
-// Lint levels of Clippy.
-#![warn(clippy::cargo, clippy::nursery, clippy::pedantic)]
-
 use std::{fs::File, io::BufReader, path::PathBuf};
 
 use anyhow::Context;
