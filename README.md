@@ -23,7 +23,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-xbm = "0.1.1"
+xbm = "0.1.2"
 ```
 
 ### Crate features
