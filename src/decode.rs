@@ -281,10 +281,13 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # use xbm::Decoder;
     /// #
     /// // "B" (8x7)
-    /// let expected = [
-    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
-    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    /// ];
+    /// let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x00\x00\x00\x00\x00\x00";
     ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
@@ -293,7 +296,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///
     /// let mut buf = [u8::default(); 56];
     /// decoder.decode(&mut buf).unwrap();
-    /// assert_eq!(buf, expected);
+    /// assert_eq!(buf, *expected);
     /// ```
     pub fn decode(self, buf: &mut (impl AsMut<[u8]> + ?Sized)) -> Result<(), Error> {
         let inner = |decoder: Self, buf: &mut [u8]| -> Result<(), Error> {
@@ -398,10 +401,13 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # use xbm::Decoder;
     /// #
     /// // "B" (8x7)
-    /// let expected = [
-    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
-    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    /// ];
+    /// let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                  \x00\x00\x00\x00\x00\x00\x00\x00";
     ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)

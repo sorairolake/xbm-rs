@@ -52,15 +52,18 @@ impl<W: Write> Encoder<W> {
     /// # use xbm::Encoder;
     /// #
     /// // "B" (8x7)
-    /// let pixels = [
-    ///     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,
-    ///     0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    /// ];
+    /// let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
+    ///                \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                \x00\x00\x01\x00\x00\x01\x00\x00\
+    ///                \x00\x00\x01\x01\x01\x00\x00\x00\
+    ///                \x00\x00\x00\x00\x00\x00\x00\x00";
     ///
     /// let mut buf = [u8::default(); 132];
     /// let encoder = Encoder::new(buf.as_mut_slice());
     /// encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
-    /// assert_eq!(buf.as_slice(), include_bytes!("../tests/data/basic.xbm"));
+    /// assert_eq!(buf, *include_bytes!("../tests/data/basic.xbm"));
     /// ```
     ///
     /// [Unicode Standard Annex #31]: https://www.unicode.org/reports/tr31/
@@ -178,14 +181,16 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
             ExtendedColorType, ImageError,
         };
 
+        let name = "image";
         match color_type {
             ExtendedColorType::L1 => self
-                .encode(buf, "image", width, height, None, None)
+                .encode(buf, name, width, height, None, None)
                 .map_err(ImageError::IoError),
             ExtendedColorType::L8 => {
                 let mut buf = buf.to_vec();
-                buf.iter_mut().for_each(|p| *p = u8::from(*p < 128));
-                self.encode(buf, "image", width, height, None, None)
+                buf.iter_mut()
+                    .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
+                self.encode(buf, name, width, height, None, None)
                     .map_err(ImageError::IoError)
             }
             _ => Err(ImageError::Encoding(EncodingError::new(

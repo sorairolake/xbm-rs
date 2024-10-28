@@ -4,7 +4,7 @@
 
 [package]
 name = "xbm"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2021"
 rust-version = "1.74.0"
@@ -22,6 +22,16 @@ all-features = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[example]]
+name = "png2xbm"
+path = "examples/png2xbm.rs"
+required-features = ["image"]
+
+[[example]]
+name = "xbm2png"
+path = "examples/xbm2png.rs"
+required-features = ["image"]
+
 [dependencies]
 image = { version = "0.25.4", default-features = false, optional = true }
 unicode-ident = "1.0.13"
@@ -30,7 +40,18 @@ unicode-ident = "1.0.13"
 anyhow = "1.0.91"
 clap = { version = "4.5.20", features = ["derive"] }
 image = { version = "0.25.4", default-features = false, features = ["png"] }
+indoc = "2.0.5"
 
 [features]
 default = ["image"]
 image = ["dep:image"]
+
+[lints.clippy]
+cargo = "warn"
+nursery = "warn"
+pedantic = "warn"
+
+[lints.rust]
+missing_debug_implementations = "deny"
+rust_2018_idioms = { level = "warn", priority = -1 }
+unsafe_code = "forbid"
