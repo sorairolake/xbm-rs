@@ -1264,7 +1264,7 @@ fn decode_with_invalid_termination() {
             #define image_height 7
             static unsigned char image_bits[] = {
                 0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-            }; 
+            };\u{0020}
         "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
