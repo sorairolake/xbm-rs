@@ -176,6 +176,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// let decoder = Decoder::new(reader).unwrap();
     /// assert_eq!(decoder.width(), 8);
     /// ```
+    #[inline]
     pub const fn width(&self) -> u32 {
         self.width
     }
@@ -195,6 +196,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// let decoder = Decoder::new(reader).unwrap();
     /// assert_eq!(decoder.height(), 7);
     /// ```
+    #[inline]
     pub const fn height(&self) -> u32 {
         self.height
     }
@@ -222,6 +224,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// let decoder = Decoder::new(reader).unwrap();
     /// assert_eq!(decoder.x_hot(), Some(4));
     /// ```
+    #[inline]
     pub const fn x_hot(&self) -> Option<u32> {
         self.x_hot
     }
@@ -249,6 +252,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// let decoder = Decoder::new(reader).unwrap();
     /// assert_eq!(decoder.y_hot(), Some(3));
     /// ```
+    #[inline]
     pub const fn y_hot(&self) -> Option<u32> {
         self.y_hot
     }
@@ -417,6 +421,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// let buf = decoder.decode_to_vec().unwrap();
     /// assert_eq!(buf, expected);
     /// ```
+    #[inline]
     pub fn decode_to_vec(self) -> Result<Vec<u8>, Error> {
         let dimensions = usize::try_from(self.width())
             .expect("width should be in the range of `usize`")
@@ -429,10 +434,12 @@ impl<R: BufRead + Seek> Decoder<R> {
 
 #[cfg(feature = "image")]
 impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
+    #[inline]
     fn dimensions(&self) -> (u32, u32) {
         (self.width(), self.height())
     }
 
+    #[inline]
     fn color_type(&self) -> image::ColorType {
         use image::ColorType;
 
@@ -458,10 +465,12 @@ impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
         Ok(())
     }
 
+    #[inline]
     fn read_image_boxed(self: Box<Self>, buf: &mut [u8]) -> image::ImageResult<()> {
         (*self).read_image(buf)
     }
 
+    #[inline]
     fn original_color_type(&self) -> image::ExtendedColorType {
         use image::ExtendedColorType;
 
@@ -521,12 +530,14 @@ impl error::Error for Error {
 }
 
 impl From<io::Error> for Error {
+    #[inline]
     fn from(err: io::Error) -> Self {
         Self::Io(err)
     }
 }
 
 impl From<ParseIntError> for Error {
+    #[inline]
     fn from(err: ParseIntError) -> Self {
         Self::ParseInt(err)
     }
