@@ -37,7 +37,7 @@ image = { version = "0.25.4", default-features = false, optional = true }
 unicode-ident = "1.0.13"
 
 [dev-dependencies]
-anyhow = "1.0.91"
+anyhow = "1.0.92"
 clap = { version = "4.5.20", features = ["derive"] }
 image = { version = "0.25.4", default-features = false, features = ["png"] }
 indoc = "2.0.5"
