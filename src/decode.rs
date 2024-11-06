@@ -14,6 +14,7 @@ use std::{
 #[derive(Debug)]
 pub struct Decoder<R: BufRead + Seek> {
     reader: R,
+    name: String,
     width: u32,
     height: u32,
     x_hot: Option<u32>,
@@ -152,13 +153,35 @@ impl<R: BufRead + Seek> Decoder<R> {
         } else {
             return Err(Error::InvalidHeader);
         }
+        let name = name.into();
         Ok(Self {
             reader,
+            name,
             width,
             height,
             x_hot,
             y_hot,
         })
+    }
+
+    /// Returns the name of the image.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::{fs::File, io::BufReader};
+    /// #
+    /// # use xbm::Decoder;
+    /// #
+    /// let reader = File::open("tests/data/basic.xbm")
+    ///     .map(BufReader::new)
+    ///     .unwrap();
+    /// let decoder = Decoder::new(reader).unwrap();
+    /// assert_eq!(decoder.name(), "image");
+    /// ```
+    #[inline]
+    pub fn name(&self) -> &str {
+        &self.name
     }
 
     /// Returns the width of the image.
