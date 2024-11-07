@@ -20,6 +20,10 @@ project adheres to https://semver.org/[Semantic Versioning].
 
 * Add `Decoder::name` method ({pull-request-url}/25[#25])
 
+=== Changed
+
+* Change MSRV to 1.70.0 ({pull-request-url}/26[#26])
+
 == {compare-url}/v0.1.1\...v0.1.2[0.1.2] - 2024-10-28
 
 === Added
