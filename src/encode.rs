@@ -23,6 +23,7 @@ impl<W: Write> Encoder<W> {
     /// let buf = [].as_mut_slice();
     /// let encoder = Encoder::new(buf);
     /// ```
+    #[inline]
     pub const fn new(writer: W) -> Self {
         Self { writer }
     }

@@ -28,6 +28,7 @@ fn decode() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 8);
         assert_eq!(decoder.height(), 7);
         assert_eq!(decoder.x_hot(), None);
@@ -41,6 +42,7 @@ fn decode() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 8);
         assert_eq!(decoder.height(), 7);
         assert_eq!(decoder.x_hot(), None);
@@ -66,6 +68,7 @@ fn decode_lower_hex() {
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.name(), "image");
     assert_eq!(decoder.width(), 8);
     assert_eq!(decoder.height(), 7);
     assert_eq!(decoder.x_hot(), None);
@@ -90,6 +93,7 @@ fn decode_width_name() {
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.name(), "test");
     assert_eq!(decoder.width(), 8);
     assert_eq!(decoder.height(), 7);
     assert_eq!(decoder.x_hot(), None);
@@ -142,6 +146,7 @@ fn decode_16x14() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 16);
         assert_eq!(decoder.height(), 14);
         assert_eq!(decoder.x_hot(), None);
@@ -155,6 +160,7 @@ fn decode_16x14() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 16);
         assert_eq!(decoder.height(), 14);
         assert_eq!(decoder.x_hot(), None);
@@ -180,6 +186,7 @@ fn decode_width_7() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 7);
         assert_eq!(decoder.height(), 6);
         assert_eq!(decoder.x_hot(), None);
@@ -193,6 +200,7 @@ fn decode_width_7() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 7);
         assert_eq!(decoder.height(), 6);
         assert_eq!(decoder.x_hot(), None);
@@ -224,6 +232,7 @@ fn decode_width_14() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 14);
         assert_eq!(decoder.height(), 12);
         assert_eq!(decoder.x_hot(), None);
@@ -237,6 +246,7 @@ fn decode_width_14() {
             .map(BufReader::new)
             .unwrap();
         let decoder = Decoder::new(reader).unwrap();
+        assert_eq!(decoder.name(), "image");
         assert_eq!(decoder.width(), 14);
         assert_eq!(decoder.height(), 12);
         assert_eq!(decoder.x_hot(), None);
@@ -262,6 +272,7 @@ fn decode_with_hotspot() {
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.name(), "image");
     assert_eq!(decoder.width(), 8);
     assert_eq!(decoder.height(), 7);
     assert_eq!(decoder.x_hot(), Some(4));
@@ -286,6 +297,7 @@ fn decode_without_unsigned() {
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.name(), "image");
     assert_eq!(decoder.width(), 8);
     assert_eq!(decoder.height(), 7);
     assert_eq!(decoder.x_hot(), None);
@@ -1264,7 +1276,7 @@ fn decode_with_invalid_termination() {
             #define image_height 7
             static unsigned char image_bits[] = {
                 0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
-            }; 
+            };\x20
         "};
         let image = Cursor::new(image);
         let decoder = Decoder::new(image).unwrap();
@@ -1408,6 +1420,7 @@ fn xbm_to_png() {
         .map(BufReader::new)
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
+    assert_eq!(decoder.name(), "image");
     assert_eq!(decoder.width(), 296);
     assert_eq!(decoder.height(), 296);
     assert_eq!(decoder.x_hot(), None);

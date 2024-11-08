@@ -47,6 +47,16 @@ fn decode_to_vec(b: &mut Bencher) {
 }
 
 #[bench]
+fn name(b: &mut Bencher) {
+    let reader = File::open("tests/data/qr_code.xbm")
+        .map(BufReader::new)
+        .unwrap();
+    let decoder = Decoder::new(reader).unwrap();
+
+    b.iter(|| decoder.name());
+}
+
+#[bench]
 fn width(b: &mut Bencher) {
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
