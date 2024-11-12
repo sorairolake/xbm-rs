@@ -1346,7 +1346,7 @@ fn decode_from_too_large_image() {
     let image = Cursor::new(image);
     let decoder = Decoder::new(image).unwrap();
     let mut buf = [u8::default(); 56];
-    let _: Result<(), Error> = decoder.decode(&mut buf);
+    let _ = decoder.decode(&mut buf);
 }
 
 #[test]
@@ -1380,7 +1380,7 @@ fn decode_with_invalid_buffer() {
         .unwrap();
     let decoder = Decoder::new(reader).unwrap();
     let mut buf = [];
-    let _: Result<(), Error> = decoder.decode(&mut buf);
+    let _ = decoder.decode(&mut buf);
 }
 
 #[cfg(feature = "image")]

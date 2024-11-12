@@ -7,7 +7,7 @@ use std::{
     str,
 };
 
-use xbm::{encode::Error, Encoder};
+use xbm::Encoder;
 
 #[test]
 fn encode() {
@@ -325,7 +325,7 @@ fn encode_with_invalid_dimensions() {
 
     let mut buf = [];
     let encoder = Encoder::new(buf.as_mut_slice());
-    let _: Result<(), Error> = encoder.encode(pixels, "image", 4, 3, None, None);
+    let _ = encoder.encode(pixels, "image", 4, 3, None, None);
 }
 
 #[cfg(feature = "image")]
