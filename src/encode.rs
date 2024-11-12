@@ -207,13 +207,12 @@ pub type Error = io::Error;
 
 #[cfg(test)]
 mod tests {
+    use std::any;
+
     use super::*;
 
     #[test]
     fn error_type() {
-        assert_eq!(
-            std::any::type_name::<Error>(),
-            std::any::type_name::<io::Error>()
-        );
+        assert_eq!(any::type_name::<Error>(), any::type_name::<io::Error>());
     }
 }
