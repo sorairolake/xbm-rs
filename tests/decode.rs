@@ -756,7 +756,6 @@ fn decode_with_invalid_y_hot_statement() {
 }
 
 #[test]
-#[allow(clippy::too_many_lines)]
 fn decode_with_invalid_array_declaration() {
     {
         let image = indoc! {"

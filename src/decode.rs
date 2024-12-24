@@ -22,11 +22,7 @@ pub struct Decoder<R: BufRead + Seek> {
 }
 
 impl<R: BufRead + Seek> Decoder<R> {
-    #[allow(
-        clippy::cognitive_complexity,
-        clippy::missing_panics_doc,
-        clippy::too_many_lines
-    )]
+    #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
     /// Creates a new `Decoder`.
     ///
     /// # Errors
