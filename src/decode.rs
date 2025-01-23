@@ -235,7 +235,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///     .map(BufReader::new)
     ///     .unwrap();
     /// let decoder = Decoder::new(reader).unwrap();
-    /// assert!(decoder.x_hot().is_none());
+    /// assert_eq!(decoder.x_hot(), None);
     ///
     /// let reader = File::open("tests/data/hotspot.xbm")
     ///     .map(BufReader::new)
@@ -263,7 +263,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///     .map(BufReader::new)
     ///     .unwrap();
     /// let decoder = Decoder::new(reader).unwrap();
-    /// assert!(decoder.y_hot().is_none());
+    /// assert_eq!(decoder.y_hot(), None);
     ///
     /// let reader = File::open("tests/data/hotspot.xbm")
     ///     .map(BufReader::new)
