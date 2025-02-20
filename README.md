@@ -19,11 +19,10 @@ This crate supports the [X version 11 bitmap file format].
 
 ## Usage
 
-Add this to your `Cargo.toml`:
+Run the following command in your project directory:
 
-```toml
-[dependencies]
-xbm = "0.1.3"
+```sh
+cargo add xbm
 ```
 
 ### Crate features
