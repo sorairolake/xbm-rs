@@ -178,8 +178,8 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
         color_type: image::ExtendedColorType,
     ) -> image::ImageResult<()> {
         use image::{
-            error::{EncodingError, ImageFormatHint},
             ExtendedColorType, ImageError,
+            error::{EncodingError, ImageFormatHint},
         };
 
         let name = "image";

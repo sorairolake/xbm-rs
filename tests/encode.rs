@@ -202,9 +202,11 @@ fn valid_name() {
     }
     {
         let encoder = Encoder::new(buf.by_ref());
-        assert!(encoder
-            .encode(pixels, "\u{30C6}\u{30B9}\u{30C8}", 8, 7, None, None)
-            .is_ok());
+        assert!(
+            encoder
+                .encode(pixels, "\u{30C6}\u{30B9}\u{30C8}", 8, 7, None, None)
+                .is_ok()
+        );
     }
 }
 

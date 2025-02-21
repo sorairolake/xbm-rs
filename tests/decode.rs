@@ -10,7 +10,7 @@ use std::{
 };
 
 use indoc::indoc;
-use xbm::{decode::Error, Decoder};
+use xbm::{Decoder, decode::Error};
 
 #[test]
 fn decode() {

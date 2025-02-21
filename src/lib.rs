@@ -90,8 +90,8 @@
 //! };
 //!
 //! use xbm::{
-//!     image::{DynamicImage, ImageDecoder, ImageFormat},
 //!     Decoder,
+//!     image::{DynamicImage, ImageDecoder, ImageFormat},
 //! };
 //!
 //! let reader = File::open("tests/data/qr_code.xbm")
