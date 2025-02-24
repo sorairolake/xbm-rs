@@ -36,7 +36,11 @@ impl<W: Write> Encoder<W> {
     /// Standard Annex #31], but it is recommended that `name` be restricted to
     /// the ASCII subset of `XID_Start` and `XID_Continue`.
     ///
+    /// <div class="warning">
+    ///
     /// `width` should be a multiple of 8.
+    ///
+    /// </div>
     ///
     /// # Errors
     ///
