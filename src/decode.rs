@@ -10,6 +10,12 @@ use std::{
     num::ParseIntError,
 };
 
+#[cfg(feature = "image")]
+use image::{
+    ColorType, ExtendedColorType, ImageDecoder, ImageError, ImageResult,
+    error::{DecodingError, ImageFormatHint},
+};
+
 /// Decoder for XBM images.
 #[derive(Debug)]
 pub struct Decoder<R: BufRead + Seek> {
@@ -452,25 +458,18 @@ impl<R: BufRead + Seek> Decoder<R> {
 }
 
 #[cfg(feature = "image")]
-impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
+impl<R: BufRead + Seek> ImageDecoder for Decoder<R> {
     #[inline]
     fn dimensions(&self) -> (u32, u32) {
         (self.width(), self.height())
     }
 
     #[inline]
-    fn color_type(&self) -> image::ColorType {
-        use image::ColorType;
-
+    fn color_type(&self) -> ColorType {
         ColorType::L8
     }
 
-    fn read_image(self, buf: &mut [u8]) -> image::ImageResult<()> {
-        use image::{
-            ImageError,
-            error::{DecodingError, ImageFormatHint},
-        };
-
+    fn read_image(self, buf: &mut [u8]) -> ImageResult<()> {
         self.decode(buf).map_err(|err| match err {
             Error::Io(err) => ImageError::IoError(err),
             err => ImageError::Decoding(DecodingError::new(
@@ -485,14 +484,12 @@ impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
     }
 
     #[inline]
-    fn read_image_boxed(self: Box<Self>, buf: &mut [u8]) -> image::ImageResult<()> {
+    fn read_image_boxed(self: Box<Self>, buf: &mut [u8]) -> ImageResult<()> {
         (*self).read_image(buf)
     }
 
     #[inline]
-    fn original_color_type(&self) -> image::ExtendedColorType {
-        use image::ExtendedColorType;
-
+    fn original_color_type(&self) -> ExtendedColorType {
         ExtendedColorType::L1
     }
 }
