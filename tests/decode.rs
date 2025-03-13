@@ -9,8 +9,6 @@ use std::{
     num::{IntErrorKind, ParseIntError},
 };
 
-#[cfg(feature = "image")]
-use image::{ColorType, DynamicImage, ExtendedColorType, ImageDecoder, ImageFormat};
 use indoc::indoc;
 use xbm::{Decoder, decode::Error};
 
@@ -1387,6 +1385,8 @@ fn decode_with_invalid_buffer() {
 #[cfg(feature = "image")]
 #[test]
 fn image_decoder() {
+    use image::{ColorType, ExtendedColorType, ImageDecoder};
+
     // "B" (8x7)
     let expected = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\
                      \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
@@ -1413,6 +1413,8 @@ fn image_decoder() {
 #[cfg(feature = "image")]
 #[test]
 fn xbm_to_png() {
+    use image::{DynamicImage, ImageFormat};
+
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();

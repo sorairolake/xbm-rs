@@ -9,8 +9,6 @@ extern crate test;
 use std::io::Write;
 
 use image::DynamicImage;
-#[cfg(feature = "image")]
-use image::{ExtendedColorType, ImageEncoder};
 use test::Bencher;
 use xbm::Encoder;
 
@@ -46,6 +44,8 @@ fn encode(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn write_image(b: &mut Bencher) {
+    use image::{ExtendedColorType, ImageEncoder};
+
     let pixels = image::open("tests/data/qr_code.png")
         .map(DynamicImage::into_bytes)
         .unwrap();
