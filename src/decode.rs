@@ -22,11 +22,7 @@ pub struct Decoder<R: BufRead + Seek> {
 }
 
 impl<R: BufRead + Seek> Decoder<R> {
-    #[allow(
-        clippy::cognitive_complexity,
-        clippy::missing_panics_doc,
-        clippy::too_many_lines
-    )]
+    #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
     /// Creates a new `Decoder`.
     ///
     /// # Errors
@@ -239,7 +235,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///     .map(BufReader::new)
     ///     .unwrap();
     /// let decoder = Decoder::new(reader).unwrap();
-    /// assert!(decoder.x_hot().is_none());
+    /// assert_eq!(decoder.x_hot(), None);
     ///
     /// let reader = File::open("tests/data/hotspot.xbm")
     ///     .map(BufReader::new)
@@ -267,7 +263,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     ///     .map(BufReader::new)
     ///     .unwrap();
     /// let decoder = Decoder::new(reader).unwrap();
-    /// assert!(decoder.y_hot().is_none());
+    /// assert_eq!(decoder.y_hot(), None);
     ///
     /// let reader = File::open("tests/data/hotspot.xbm")
     ///     .map(BufReader::new)
@@ -471,8 +467,8 @@ impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
 
     fn read_image(self, buf: &mut [u8]) -> image::ImageResult<()> {
         use image::{
-            error::{DecodingError, ImageFormatHint},
             ImageError,
+            error::{DecodingError, ImageFormatHint},
         };
 
         self.decode(buf).map_err(|err| match err {
@@ -628,14 +624,18 @@ mod tests {
         assert!(Error::InvalidHexByte(String::default()).source().is_none());
         assert!(Error::InvalidTermination.source().is_none());
         assert!(Error::InvalidImageSize(usize::default()).source().is_none());
-        assert!(Error::Io(io::Error::from(ErrorKind::NotFound))
-            .source()
-            .unwrap()
-            .is::<io::Error>());
-        assert!(Error::ParseInt(u32::from_str("").unwrap_err())
-            .source()
-            .unwrap()
-            .is::<ParseIntError>());
+        assert!(
+            Error::Io(io::Error::from(ErrorKind::NotFound))
+                .source()
+                .unwrap()
+                .is::<io::Error>()
+        );
+        assert!(
+            Error::ParseInt(u32::from_str("").unwrap_err())
+                .source()
+                .unwrap()
+                .is::<ParseIntError>()
+        );
     }
 
     #[test]

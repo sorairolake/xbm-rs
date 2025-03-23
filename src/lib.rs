@@ -90,8 +90,8 @@
 //! };
 //!
 //! use xbm::{
-//!     image::{DynamicImage, ImageDecoder, ImageFormat},
 //!     Decoder,
+//!     image::{DynamicImage, ImageDecoder, ImageFormat},
 //! };
 //!
 //! let reader = File::open("tests/data/qr_code.xbm")
@@ -113,7 +113,7 @@
 //! [XBM]: https://en.wikipedia.org/wiki/X_BitMap
 //! [X version 11 bitmap file format]: https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#Manipulating_Bitmaps
 
-#![doc(html_root_url = "https://docs.rs/xbm/0.1.3/")]
+#![doc(html_root_url = "https://docs.rs/xbm/0.2.0/")]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 // Lint levels of rustc.
 #![deny(missing_docs)]

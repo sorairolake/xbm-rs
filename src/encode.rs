@@ -36,7 +36,11 @@ impl<W: Write> Encoder<W> {
     /// Standard Annex #31], but it is recommended that `name` be restricted to
     /// the ASCII subset of `XID_Start` and `XID_Continue`.
     ///
+    /// <div class="warning">
+    ///
     /// `width` should be a multiple of 8.
+    ///
+    /// </div>
     ///
     /// # Errors
     ///
@@ -178,8 +182,8 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
         color_type: image::ExtendedColorType,
     ) -> image::ImageResult<()> {
         use image::{
-            error::{EncodingError, ImageFormatHint},
             ExtendedColorType, ImageError,
+            error::{EncodingError, ImageFormatHint},
         };
 
         let name = "image";
@@ -207,13 +211,12 @@ pub type Error = io::Error;
 
 #[cfg(test)]
 mod tests {
+    use std::any;
+
     use super::*;
 
     #[test]
     fn error_type() {
-        assert_eq!(
-            std::any::type_name::<Error>(),
-            std::any::type_name::<io::Error>()
-        );
+        assert_eq!(any::type_name::<Error>(), any::type_name::<io::Error>());
     }
 }

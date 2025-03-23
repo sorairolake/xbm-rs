@@ -4,10 +4,10 @@
 
 [package]
 name = "xbm"
-version = "0.1.3"
+version = "0.2.0"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
-edition = "2021"
-rust-version = "1.70.0"
+edition = "2024"
+rust-version = "1.85.0"
 description = "XBM encoding and decoding library"
 documentation = "https://docs.rs/xbm"
 readme = "README.md"
@@ -19,8 +19,6 @@ include = ["/LICENSES", "/README.md", "/src"]
 
 [package.metadata.docs.rs]
 all-features = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[example]]
 name = "png2xbm"
@@ -34,13 +32,13 @@ required-features = ["image"]
 
 [dependencies]
 image = { version = "0.25.5", default-features = false, optional = true }
-unicode-ident = "1.0.13"
+unicode-ident = "1.0.18"
 
 [dev-dependencies]
-anyhow = "1.0.93"
-clap = { version = "4.5.20", features = ["derive"] }
+anyhow = "1.0.97"
+clap = { version = "4.5.32", features = ["derive"] }
 image = { version = "0.25.5", default-features = false, features = ["png"] }
-indoc = "2.0.5"
+indoc = "2.0.6"
 
 [features]
 default = ["image"]
