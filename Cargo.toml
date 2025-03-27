@@ -31,13 +31,13 @@ path = "examples/xbm2png.rs"
 required-features = ["image"]
 
 [dependencies]
-image = { version = "0.25.5", default-features = false, optional = true }
+image = { version = "0.25.6", default-features = false, optional = true }
 unicode-ident = "1.0.18"
 
 [dev-dependencies]
 anyhow = "1.0.97"
 clap = { version = "4.5.32", features = ["derive"] }
-image = { version = "0.25.5", default-features = false, features = ["png"] }
+image = { version = "0.25.6", default-features = false, features = ["png"] }
 indoc = "2.0.6"
 
 [features]
