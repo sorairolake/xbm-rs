@@ -160,6 +160,8 @@ impl<R: BufRead + Seek> Decoder<R> {
         })
     }
 
+    // TODO: This may be removed once Rust 1.87 is released.
+    #[allow(clippy::missing_const_for_fn)]
     /// Returns the name of the image.
     ///
     /// # Examples
