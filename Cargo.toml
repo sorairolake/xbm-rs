@@ -36,7 +36,7 @@ unicode-ident = "1.0.18"
 
 [dev-dependencies]
 anyhow = "1.0.97"
-clap = { version = "4.5.34", features = ["derive"] }
+clap = { version = "4.5.35", features = ["derive"] }
 image = { version = "0.25.6", default-features = false, features = ["png"] }
 indoc = "2.0.6"
 
