@@ -202,11 +202,7 @@ fn valid_name() {
     }
     {
         let encoder = Encoder::new(buf.by_ref());
-        assert!(
-            encoder
-                .encode(pixels, "\u{30C6}\u{30B9}\u{30C8}", 8, 7, None, None)
-                .is_ok()
-        );
+        assert!(encoder.encode(pixels, "テスト", 8, 7, None, None).is_ok());
     }
 }
 
@@ -265,9 +261,7 @@ fn invalid_name() {
     }
     {
         let encoder = Encoder::new(buf.as_mut_slice());
-        let err = encoder
-            .encode(pixels, "\u{1F980}", 8, 7, None, None)
-            .unwrap_err();
+        let err = encoder.encode(pixels, "🦀", 8, 7, None, None).unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidData);
         assert_eq!(err.to_string(), "invalid C identifier prefix");
     }

@@ -381,11 +381,11 @@ fn decode_with_valid_identifiers() {
     }
     {
         let image = indoc! {"
-            #define \u{30C6}\u{30B9}\u{30C8}_width 8
-            #define \u{30C6}\u{30B9}\u{30C8}_height 7
-            #define \u{30C6}\u{30B9}\u{30C8}_x_hot 4
-            #define \u{30C6}\u{30B9}\u{30C8}_y_hot 3
-            static unsigned char \u{30C6}\u{30B9}\u{30C8}_bits[] = {
+            #define テスト_width 8
+            #define テスト_height 7
+            #define テスト_x_hot 4
+            #define テスト_y_hot 3
+            static unsigned char テスト_bits[] = {
                 0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
             };
         "};
@@ -469,11 +469,11 @@ fn decode_with_invalid_identifiers() {
     }
     {
         let image = indoc! {"
-            #define \u{1F980}_width 8
-            #define \u{1F980}_height 7
-            #define \u{1F980}_x_hot 4
-            #define \u{1F980}_y_hot 3
-            static unsigned char \u{1F980}_bits[] = {
+            #define 🦀_width 8
+            #define 🦀_height 7
+            #define 🦀_x_hot 4
+            #define 🦀_y_hot 3
+            static unsigned char 🦀_bits[] = {
                 0x00, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
             };
         "};
@@ -1154,7 +1154,7 @@ fn decode_with_invalid_hex_byte() {
             #define image_width 8
             #define image_height 7
             static unsigned char image_bits[] = {
-                \u{1F980}, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
+                🦀, 0x1C, 0x24, 0x1C, 0x24, 0x1C, 0x00,
             };
         "};
         let image = Cursor::new(image);
@@ -1162,7 +1162,7 @@ fn decode_with_invalid_hex_byte() {
         let mut buf = [u8::default(); 56];
         let err = decoder.decode(&mut buf).unwrap_err();
         if let Error::InvalidHexByte(value) = err {
-            assert_eq!(value, "\u{1F980}");
+            assert_eq!(value, "🦀");
         } else {
             unreachable!();
         }
