@@ -193,8 +193,9 @@ impl<W: Write> image::ImageEncoder for Encoder<W> {
                 .map_err(ImageError::IoError),
             ExtendedColorType::L8 => {
                 let mut buf = buf.to_vec();
-                buf.iter_mut()
-                    .for_each(|p| *p = u8::from(*p <= (u8::MAX / 2)));
+                for p in &mut buf {
+                    *p = u8::from(*p <= (u8::MAX / 2));
+                }
                 self.encode(buf, name, width, height, None, None)
                     .map_err(ImageError::IoError)
             }

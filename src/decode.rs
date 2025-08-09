@@ -481,8 +481,9 @@ impl<R: BufRead + Seek> image::ImageDecoder for Decoder<R> {
             )),
         })?;
         debug_assert!(!buf.iter().any(|&p| p > 1));
-        buf.iter_mut()
-            .for_each(|p| *p = if p == &0 { u8::MAX } else { u8::MIN });
+        for p in buf {
+            *p = if p == &0 { u8::MAX } else { u8::MIN };
+        }
         Ok(())
     }
 
