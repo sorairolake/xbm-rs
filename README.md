@@ -1,7 +1,7 @@
 <!--
 SPDX-FileCopyrightText: 2024 Shun Sakai
 
-SPDX-License-Identifier: Apache-2.0 OR MIT
+SPDX-License-Identifier: CC-BY-4.0
 -->
 
 # xbm-rs
@@ -43,11 +43,6 @@ The minimum supported Rust version (MSRV) of this library is v1.85.0.
 
 The upstream repository is available at
 <https://github.com/sorairolake/xbm-rs.git>.
-
-The source code is also available at:
-
-- <https://gitlab.com/sorairolake/xbm-rs.git>
-- <https://codeberg.org/sorairolake/xbm-rs.git>
 
 ## Changelog
 
