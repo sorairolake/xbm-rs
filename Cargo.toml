@@ -22,12 +22,10 @@ all-features = true
 
 [[example]]
 name = "png2xbm"
-path = "examples/png2xbm.rs"
 required-features = ["image"]
 
 [[example]]
 name = "xbm2png"
-path = "examples/xbm2png.rs"
 required-features = ["image"]
 
 [dependencies]
