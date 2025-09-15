@@ -30,7 +30,7 @@ required-features = ["image"]
 
 [dependencies]
 image = { version = "0.25.8", default-features = false, optional = true }
-unicode-ident = "1.0.18"
+unicode-ident = "1.0.19"
 
 [dev-dependencies]
 anyhow = "1.0.99"
