@@ -5,12 +5,10 @@
 [package]
 name = "xbm"
 version = "0.2.1"
-authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2024"
 rust-version = "1.85.0"
 description = "XBM encoding and decoding library"
 documentation = "https://docs.rs/xbm"
-readme = "README.md"
 repository = "https://github.com/sorairolake/xbm-rs"
 license = "Apache-2.0 OR MIT"
 keywords = ["encoding", "image", "xbm"]
