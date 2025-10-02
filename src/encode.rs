@@ -6,6 +6,12 @@
 
 use std::io::{self, ErrorKind, Write};
 
+#[cfg(feature = "image")]
+use image::{
+    ExtendedColorType, ImageEncoder, ImageError, ImageResult,
+    error::{EncodingError, ImageFormatHint},
+};
+
 /// Encoder for XBM images.
 #[derive(Debug)]
 pub struct Encoder<W: Write> {
@@ -173,19 +179,14 @@ impl<W: Write> Encoder<W> {
 }
 
 #[cfg(feature = "image")]
-impl<W: Write> image::ImageEncoder for Encoder<W> {
+impl<W: Write> ImageEncoder for Encoder<W> {
     fn write_image(
         self,
         buf: &[u8],
         width: u32,
         height: u32,
-        color_type: image::ExtendedColorType,
-    ) -> image::ImageResult<()> {
-        use image::{
-            ExtendedColorType, ImageError,
-            error::{EncodingError, ImageFormatHint},
-        };
-
+        color_type: ExtendedColorType,
+    ) -> ImageResult<()> {
         let name = "image";
         match color_type {
             ExtendedColorType::L1 => self

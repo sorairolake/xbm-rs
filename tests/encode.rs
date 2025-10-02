@@ -7,6 +7,8 @@ use std::{
     str,
 };
 
+#[cfg(feature = "image")]
+use image::{ExtendedColorType, ImageEncoder};
 use xbm::Encoder;
 
 #[test]
@@ -327,8 +329,6 @@ fn encode_with_invalid_dimensions() {
 #[cfg(feature = "image")]
 #[test]
 fn image_encoder_from_l1() {
-    use image::{ExtendedColorType, ImageEncoder};
-
     // "B" (8x7)
     let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
                    \x00\x00\x01\x01\x01\x00\x00\x00\
@@ -352,8 +352,6 @@ fn image_encoder_from_l1() {
 #[cfg(feature = "image")]
 #[test]
 fn image_encoder_from_l8() {
-    use image::{ExtendedColorType, ImageEncoder};
-
     // "B" (8x7)
     let pixels = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\
                    \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
@@ -377,8 +375,6 @@ fn image_encoder_from_l8() {
 #[cfg(feature = "image")]
 #[test]
 fn image_encoder_from_unsupported_color_type() {
-    use image::{ExtendedColorType, ImageEncoder};
-
     // A black pixel (1x1)
     let pixels = [u8::MIN; 3];
 
