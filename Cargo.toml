@@ -15,9 +15,6 @@ keywords = ["encoding", "image", "xbm"]
 categories = ["multimedia::encoding", "multimedia::images"]
 include = ["/LICENSES", "/README.md", "/src"]
 
-[package.metadata.docs.rs]
-all-features = true
-
 [[example]]
 name = "png2xbm"
 required-features = ["image"]
