@@ -327,7 +327,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// decoder.decode(&mut buf).unwrap();
     /// assert_eq!(buf, *expected);
     /// ```
-    pub fn decode(self, buf: &mut (impl AsMut<[u8]> + ?Sized)) -> Result<(), Error> {
+    pub fn decode<B: AsMut<[u8]> + ?Sized>(self, buf: &mut B) -> Result<(), Error> {
         let inner = |decoder: Self, buf: &mut [u8]| -> Result<(), Error> {
             let buf_len = buf.len();
             let width =
