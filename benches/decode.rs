@@ -8,6 +8,8 @@ extern crate test;
 
 use std::{fs::File, io::BufReader};
 
+#[cfg(feature = "image")]
+use image::ImageDecoder;
 use test::Bencher;
 use xbm::Decoder;
 
@@ -99,8 +101,6 @@ fn y_hot(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn read_image(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     let mut buf = test::black_box(vec![u8::default(); 87616]);
 
     b.iter(|| {
@@ -116,8 +116,6 @@ fn read_image(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn dimensions(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();
@@ -129,8 +127,6 @@ fn dimensions(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn color_type(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();
@@ -142,8 +138,6 @@ fn color_type(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn original_color_type(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();
@@ -155,8 +149,6 @@ fn original_color_type(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn icc_profile(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     b.iter(|| {
         let reader = File::open("tests/data/qr_code.xbm")
             .map(BufReader::new)
@@ -169,8 +161,6 @@ fn icc_profile(b: &mut Bencher) {
 #[cfg(feature = "image")]
 #[bench]
 fn total_bytes(b: &mut Bencher) {
-    use image::ImageDecoder;
-
     let reader = File::open("tests/data/qr_code.xbm")
         .map(BufReader::new)
         .unwrap();

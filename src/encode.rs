@@ -6,6 +6,12 @@
 
 use std::io::{self, ErrorKind, Write};
 
+#[cfg(feature = "image")]
+use image::{
+    ExtendedColorType, ImageEncoder, ImageError, ImageResult,
+    error::{EncodingError, ImageFormatHint},
+};
+
 /// Encoder for XBM images.
 #[derive(Debug)]
 pub struct Encoder<W: Write> {
@@ -65,7 +71,7 @@ impl<W: Write> Encoder<W> {
     ///                \x00\x00\x01\x01\x01\x00\x00\x00\
     ///                \x00\x00\x00\x00\x00\x00\x00\x00";
     ///
-    /// let mut buf = [u8::default(); 132];
+    /// let mut buf = [u8::default(); 131];
     /// let encoder = Encoder::new(buf.as_mut_slice());
     /// encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
     /// assert_eq!(buf, *include_bytes!("../tests/data/basic.xbm"));
@@ -158,7 +164,7 @@ impl<W: Write> Encoder<W> {
                     .join(", ");
                 writeln!(encoder.writer, "    {line},")?;
             }
-            writeln!(encoder.writer, "}};")
+            write!(encoder.writer, "}};")
         };
         inner(
             self,
@@ -173,19 +179,14 @@ impl<W: Write> Encoder<W> {
 }
 
 #[cfg(feature = "image")]
-impl<W: Write> image::ImageEncoder for Encoder<W> {
+impl<W: Write> ImageEncoder for Encoder<W> {
     fn write_image(
         self,
         buf: &[u8],
         width: u32,
         height: u32,
-        color_type: image::ExtendedColorType,
-    ) -> image::ImageResult<()> {
-        use image::{
-            ExtendedColorType, ImageError,
-            error::{EncodingError, ImageFormatHint},
-        };
-
+        color_type: ExtendedColorType,
+    ) -> ImageResult<()> {
         let name = "image";
         match color_type {
             ExtendedColorType::L1 => self

@@ -27,7 +27,7 @@
 //!                \x00\x00\x01\x01\x01\x00\x00\x00\
 //!                \x00\x00\x00\x00\x00\x00\x00\x00";
 //!
-//! let mut buf = [u8::default(); 132];
+//! let mut buf = [u8::default(); 131];
 //! let encoder = Encoder::new(buf.as_mut_slice());
 //! encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
 //! assert_eq!(buf, *include_bytes!("../tests/data/basic.xbm"));
@@ -44,7 +44,7 @@
 //!
 //! let input = image::open("tests/data/qr_code.png").unwrap();
 //!
-//! let mut buf = Vec::with_capacity(69454);
+//! let mut buf = Vec::with_capacity(69453);
 //! let encoder = Encoder::new(buf.by_ref());
 //! input.write_with_encoder(encoder).unwrap();
 //! assert_eq!(buf, include_bytes!("../tests/data/qr_code.xbm"));
@@ -113,8 +113,8 @@
 //! [XBM]: https://en.wikipedia.org/wiki/X_BitMap
 //! [X version 11 bitmap file format]: https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#Manipulating_Bitmaps
 
-#![doc(html_root_url = "https://docs.rs/xbm/0.2.1/")]
-#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
+#![doc(html_root_url = "https://docs.rs/xbm/0.3.0/")]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 // Lint levels of rustc.
 #![deny(missing_docs)]
 

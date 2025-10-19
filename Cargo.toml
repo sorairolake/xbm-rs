@@ -4,40 +4,33 @@
 
 [package]
 name = "xbm"
-version = "0.2.1"
-authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.85.0"
 description = "XBM encoding and decoding library"
 documentation = "https://docs.rs/xbm"
-readme = "README.md"
 repository = "https://github.com/sorairolake/xbm-rs"
 license = "Apache-2.0 OR MIT"
 keywords = ["encoding", "image", "xbm"]
 categories = ["multimedia::encoding", "multimedia::images"]
 include = ["/LICENSES", "/README.md", "/src"]
 
-[package.metadata.docs.rs]
-all-features = true
-
 [[example]]
 name = "png2xbm"
-path = "examples/png2xbm.rs"
 required-features = ["image"]
 
 [[example]]
 name = "xbm2png"
-path = "examples/xbm2png.rs"
 required-features = ["image"]
 
 [dependencies]
-image = { version = "0.25.6", default-features = false, optional = true }
-unicode-ident = "1.0.18"
+image = { version = "0.25.8", default-features = false, optional = true }
+unicode-ident = "1.0.19"
 
 [dev-dependencies]
-anyhow = "1.0.99"
-clap = { version = "4.5.45", features = ["derive"] }
-image = { version = "0.25.6", default-features = false, features = ["png"] }
+anyhow = "1.0.100"
+clap = { version = "4.5.49", features = ["derive"] }
+image = { version = "0.25.8", default-features = false, features = ["png"] }
 indoc = "2.0.6"
 
 [features]
