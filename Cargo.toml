@@ -4,7 +4,7 @@
 
 [package]
 name = "xbm"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.85.0"
 description = "XBM encoding and decoding library"
