@@ -22,7 +22,7 @@ fn encode() {
                    \x00\x00\x01\x01\x01\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 132];
+    let mut buf = [u8::default(); 131];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
     assert_eq!(
@@ -42,7 +42,7 @@ fn encode_width_name() {
                    \x00\x00\x01\x01\x01\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 129];
+    let mut buf = [u8::default(); 128];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder.encode(pixels, "test", 8, 7, None, None).unwrap();
     assert_eq!(str::from_utf8(&buf).unwrap(), include_str!("data/name.xbm"));
@@ -66,7 +66,7 @@ fn encode_16x14() {
                    \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 268];
+    let mut buf = [u8::default(); 267];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder.encode(pixels, "image", 16, 14, None, None).unwrap();
     assert_eq!(
@@ -85,7 +85,7 @@ fn encode_width_7() {
                    \x00\x00\x01\x01\x01\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 126];
+    let mut buf = [u8::default(); 125];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder.encode(pixels, "image", 7, 6, None, None).unwrap();
     assert_eq!(
@@ -110,7 +110,7 @@ fn encode_width_14() {
                    \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 240];
+    let mut buf = [u8::default(); 239];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder.encode(pixels, "image", 14, 12, None, None).unwrap();
     assert_eq!(
@@ -130,7 +130,7 @@ fn encode_with_hotspot() {
                    \x00\x00\x01\x01\x01\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 176];
+    let mut buf = [u8::default(); 175];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder
         .encode(pixels, "image", 8, 7, Some(4), Some(3))
@@ -175,7 +175,7 @@ fn valid_name() {
                    \x00\x00\x01\x01\x01\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = Vec::with_capacity(144);
+    let mut buf = Vec::with_capacity(143);
 
     {
         let encoder = Encoder::new(buf.by_ref());
@@ -338,7 +338,7 @@ fn image_encoder_from_l1() {
                    \x00\x00\x01\x01\x01\x00\x00\x00\
                    \x00\x00\x00\x00\x00\x00\x00\x00";
 
-    let mut buf = [u8::default(); 132];
+    let mut buf = [u8::default(); 131];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder
         .write_image(pixels, 8, 7, ExtendedColorType::L1)
@@ -361,7 +361,7 @@ fn image_encoder_from_l8() {
                    \xFF\xFF\x00\x00\x00\xFF\xFF\xFF\
                    \xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
 
-    let mut buf = [u8::default(); 132];
+    let mut buf = [u8::default(); 131];
     let encoder = Encoder::new(buf.as_mut_slice());
     encoder
         .write_image(pixels, 8, 7, ExtendedColorType::L8)
@@ -389,7 +389,7 @@ fn image_encoder_from_unsupported_color_type() {
 fn png_to_xbm() {
     let input = image::open("tests/data/qr_code.png").unwrap();
 
-    let mut buf = Vec::with_capacity(69454);
+    let mut buf = Vec::with_capacity(69453);
     let encoder = Encoder::new(buf.by_ref());
     input.write_with_encoder(encoder).unwrap();
     assert_eq!(

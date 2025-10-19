@@ -27,7 +27,7 @@
 //!                \x00\x00\x01\x01\x01\x00\x00\x00\
 //!                \x00\x00\x00\x00\x00\x00\x00\x00";
 //!
-//! let mut buf = [u8::default(); 132];
+//! let mut buf = [u8::default(); 131];
 //! let encoder = Encoder::new(buf.as_mut_slice());
 //! encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
 //! assert_eq!(buf, *include_bytes!("../tests/data/basic.xbm"));
@@ -44,7 +44,7 @@
 //!
 //! let input = image::open("tests/data/qr_code.png").unwrap();
 //!
-//! let mut buf = Vec::with_capacity(69454);
+//! let mut buf = Vec::with_capacity(69453);
 //! let encoder = Encoder::new(buf.by_ref());
 //! input.write_with_encoder(encoder).unwrap();
 //! assert_eq!(buf, include_bytes!("../tests/data/qr_code.xbm"));

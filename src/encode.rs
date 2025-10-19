@@ -71,7 +71,7 @@ impl<W: Write> Encoder<W> {
     ///                \x00\x00\x01\x01\x01\x00\x00\x00\
     ///                \x00\x00\x00\x00\x00\x00\x00\x00";
     ///
-    /// let mut buf = [u8::default(); 132];
+    /// let mut buf = [u8::default(); 131];
     /// let encoder = Encoder::new(buf.as_mut_slice());
     /// encoder.encode(pixels, "image", 8, 7, None, None).unwrap();
     /// assert_eq!(buf, *include_bytes!("../tests/data/basic.xbm"));
@@ -164,7 +164,7 @@ impl<W: Write> Encoder<W> {
                     .join(", ");
                 writeln!(encoder.writer, "    {line},")?;
             }
-            writeln!(encoder.writer, "}};")
+            write!(encoder.writer, "}};")
         };
         inner(
             self,
