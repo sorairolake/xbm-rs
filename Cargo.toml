@@ -29,7 +29,7 @@ unicode-ident = "1.0.19"
 
 [dev-dependencies]
 anyhow = "1.0.100"
-clap = { version = "4.5.49", features = ["derive"] }
+clap = { version = "4.5.50", features = ["derive"] }
 image = { version = "0.25.8", default-features = false, features = ["png"] }
 indoc = "2.0.6"
 
