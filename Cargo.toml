@@ -6,7 +6,7 @@
 name = "xbm"
 version = "0.3.0"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.87.0"
 description = "XBM encoding and decoding library"
 documentation = "https://docs.rs/xbm"
 repository = "https://github.com/sorairolake/xbm-rs"

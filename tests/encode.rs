@@ -2,10 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::{
-    io::{ErrorKind, Write},
-    str,
-};
+use std::io::{ErrorKind, Write};
 
 #[cfg(feature = "image")]
 use image::{ExtendedColorType, ImageEncoder};
