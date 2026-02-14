@@ -28,7 +28,7 @@ pub struct Decoder<R: BufRead + Seek> {
 }
 
 impl<R: BufRead + Seek> Decoder<R> {
-    #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
+    #[expect(clippy::cognitive_complexity, clippy::too_many_lines)]
     /// Creates a new `Decoder`.
     ///
     /// # Errors
@@ -401,7 +401,7 @@ impl<R: BufRead + Seek> Decoder<R> {
         inner(self, buf.as_mut())
     }
 
-    #[allow(clippy::missing_panics_doc)]
+    #[expect(clippy::missing_panics_doc)]
     /// Decodes the image into a newly allocated [`Vec`].
     ///
     /// `0` represents a white pixel and `1` represents a black pixel.
