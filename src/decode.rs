@@ -325,8 +325,7 @@ impl<R: BufRead + Seek> Decoder<R> {
     pub fn decode<B: AsMut<[u8]> + ?Sized>(self, buf: &mut B) -> Result<(), Error> {
         let inner = |decoder: Self, buf: &mut [u8]| -> Result<(), Error> {
             let buf_len = buf.len();
-            let width =
-                usize::try_from(decoder.width()).expect("width should be in the range of `usize`");
+            let width = usize::try_from(decoder.width()).unwrap();
             let dimensions = usize::try_from(decoder.height()).map(|h| width * h);
             assert_eq!(
                 Ok(buf_len),
@@ -442,9 +441,8 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// assert_eq!(buf, expected);
     /// ```
     pub fn decode_to_vec(self) -> Result<Vec<u8>, Error> {
-        let dimensions = usize::try_from(self.width())
-            .expect("width should be in the range of `usize`")
-            * usize::try_from(self.height()).expect("height should be in the range of `usize`");
+        let dimensions =
+            usize::try_from(self.width()).unwrap() * usize::try_from(self.height()).unwrap();
         let mut buf = vec![u8::default(); dimensions];
         self.decode(&mut buf)?;
         Ok(buf)

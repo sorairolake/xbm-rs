@@ -94,7 +94,7 @@ impl<W: Write> Encoder<W> {
                      x_hot: Option<u32>,
                      y_hot: Option<u32>|
          -> Result<(), Error> {
-            let width = usize::try_from(width).expect("width should be in the range of `usize`");
+            let width = usize::try_from(width).unwrap();
             let dimensions = usize::try_from(height).map(|h| width * h);
             assert_eq!(
                 Ok(buf.len()),
