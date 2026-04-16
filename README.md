@@ -35,6 +35,10 @@ Enables the [`image`] crate support.
 
 See the [documentation][docs-url] for more details.
 
+## Examples
+
+Please see the [examples] directory for examples of using this library.
+
 ## Minimum supported Rust version
 
 The minimum supported Rust version (MSRV) of this library is v1.87.0.
@@ -75,6 +79,7 @@ licensing information.
 [Rust]: https://www.rust-lang.org/
 [X version 11 bitmap file format]: https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#Manipulating_Bitmaps
 [`image`]: https://crates.io/crates/image
+[examples]: examples
 [CHANGELOG.adoc]: CHANGELOG.adoc
 [CONTRIBUTING.adoc]: CONTRIBUTING.adoc
 [AUTHORS.adoc]: AUTHORS.adoc
