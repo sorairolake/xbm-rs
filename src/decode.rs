@@ -43,10 +43,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -171,10 +171,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -190,10 +190,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -209,10 +209,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -230,10 +230,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -257,10 +257,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// let reader = File::open("tests/data/basic.xbm")
     ///     .map(BufReader::new)
     ///     .unwrap();
@@ -300,10 +300,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// // "B" (8x7)
     /// let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
     ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
@@ -419,10 +419,10 @@ impl<R: BufRead + Seek> Decoder<R> {
     /// # Examples
     ///
     /// ```
-    /// # use std::{fs::File, io::BufReader};
-    /// #
-    /// # use xbm::Decoder;
-    /// #
+    /// use std::{fs::File, io::BufReader};
+    ///
+    /// use xbm::Decoder;
+    ///
     /// // "B" (8x7)
     /// let expected = b"\x00\x00\x00\x00\x00\x00\x00\x00\
     ///                  \x00\x00\x01\x01\x01\x00\x00\x00\
