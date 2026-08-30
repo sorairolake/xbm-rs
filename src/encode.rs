@@ -24,8 +24,8 @@ impl<W: Write> Encoder<W> {
     /// # Examples
     ///
     /// ```
-    /// # use xbm::Encoder;
-    /// #
+    /// use xbm::Encoder;
+    ///
     /// let buf = [].as_mut_slice();
     /// let encoder = Encoder::new(buf);
     /// ```
@@ -59,8 +59,8 @@ impl<W: Write> Encoder<W> {
     /// # Examples
     ///
     /// ```
-    /// # use xbm::Encoder;
-    /// #
+    /// use xbm::Encoder;
+    ///
     /// // "B" (8x7)
     /// let pixels = b"\x00\x00\x00\x00\x00\x00\x00\x00\
     ///                \x00\x00\x01\x01\x01\x00\x00\x00\
