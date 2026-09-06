@@ -223,9 +223,8 @@ impl<R: BufRead + Seek> Decoder<R> {
         self.height
     }
 
-    /// Returns the _x_ coordinate of the hotspot.
-    ///
-    /// Returns [`None`] if the value is not defined.
+    /// Returns the _x_ coordinate of the hotspot, or [`None`] if the value is
+    /// not defined.
     ///
     /// # Examples
     ///
@@ -250,9 +249,8 @@ impl<R: BufRead + Seek> Decoder<R> {
         self.x_hot
     }
 
-    /// Returns the _y_ coordinate of the hotspot.
-    ///
-    /// Returns [`None`] if the value is not defined.
+    /// Returns the _y_ coordinate of the hotspot, or [`None`] if the value is
+    /// not defined.
     ///
     /// # Examples
     ///
