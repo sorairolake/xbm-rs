@@ -15,6 +15,10 @@ keywords = ["encoding", "image", "xbm"]
 categories = ["multimedia::encoding", "multimedia::images"]
 include = ["/LICENSES", "/README.md", "/src"]
 
+[features]
+default = ["image"]
+image = ["dep:image"]
+
 [[example]]
 name = "png2xbm"
 required-features = ["image"]
@@ -32,10 +36,6 @@ anyhow = "1.0.102"
 clap = { version = "4.6.1", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = ["png"] }
 indoc = "2.0.7"
-
-[features]
-default = ["image"]
-image = ["dep:image"]
 
 [lints.clippy]
 cargo = { level = "warn", priority = -1 }
