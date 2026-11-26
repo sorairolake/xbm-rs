@@ -4,10 +4,10 @@
 
 = Examples
 
-link:xbm2png.rs[]::
-
-  An example of converting a XBM file to a PNG file.
-
 link:png2xbm.rs[]::
 
   An example of converting a PNG file to a XBM file.
+
+link:xbm2png.rs[]::
+
+  An example of converting a XBM file to a PNG file.
