@@ -12,6 +12,9 @@ SPDX-License-Identifier: CC-BY-4.0
 [![Docs][docs-badge]][docs-url]
 ![License][license-badge]
 
+> [!WARNING]
+> This project is no longer maintained.
+
 **xbm-rs** ([`xbm`][version-url]) is a [XBM] encoding and decoding library in
 pure [Rust].
 
